@@ -1,3 +1,61 @@
 body {
     text-align: center;
 }
+
+.ship-container {
+    width: 500px;
+    height: 50px;
+    background-color: yellow;
+    align-items: center;
+    display: flex;
+}
+
+.ship1-preview {
+    width: 20px;
+    height: 10px;
+    margin: 3px;
+}
+
+.ship1 {
+    background-color: red;
+}
+
+.ship2-preview {
+    width: 30px;
+    height: 10px;
+    margin: 3px;
+}
+
+.ship2 {
+    background-color: orange;
+}
+
+.ship3-preview {
+    width: 30px;
+    height: 10px;
+    margin: 3px;
+}
+
+.ship3 {
+    background-color: green;
+}
+
+.ship4-preview {
+    width: 40px;
+    height: 10px;
+    margin: 3px;
+}
+
+.ship4 {
+    background-color: blue;
+}
+
+.ship5-preview {
+    width: 50px;
+    height: 10px;
+    margin: 3px;
+}
+
+.ship5 {
+    background-color: purple;
+}

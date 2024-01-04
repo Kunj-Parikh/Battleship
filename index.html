@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,28 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
 </head>
+
 <body>
-     <h1>Battleship</h1>
+    <h1>Battleship</h1>
+    <div id="game-info">
+        <!-- Info/turn displays, will inject text into this -->
+        <p>Turn: <span id="turn-display"></span></p>
+        <p>Info: <span id="info"></span></p>
+    </div>
+
+    <!-- gameboards -->
+    <div id="game-container"></div>
+    <!-- ships -->
+    <div class="ship-container">
+        <div class="ship1-preview ship1" draggable="true"></div>
+        <div class="ship2-preview ship2" draggable="true"></div>
+        <div class="ship3-preview ship3" draggable="true"></div>
+        <div class="ship4-preview ship4" draggable="true"></div>
+        <div class="ship5-preview ship5" draggable="true"></div>
+    </div>
+
+    <button id="rotate-button">ROTATE</button>
+    <button id="start-button">START</button>
 </body>
+
 </html>
