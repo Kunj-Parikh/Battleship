@@ -1,1 +1,3 @@
 Battleship
+
+A battleship game
