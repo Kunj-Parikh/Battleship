@@ -59,3 +59,14 @@ body {
 .ship5 {
     background-color: purple;
 }
+
+#rotate-button {
+    position: absolute;
+    left: 10px;
+    top: 210px;
+}
+
+#start-button {
+    position: relative;
+    top: 10px;
+}
