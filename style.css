@@ -1,3 +1,26 @@
+.boards {
+    width: 200px;
+    height:200px;
+    border: black 1px;
+    display: flex;
+    flex-wrap: w
+    
+}
+
+.block {
+    width: 20px;
+    height: 20px;
+    /* border: solid 1px black;
+    box-sizing: border-box; */
+}
+
+
+#game-container {
+    width: 500px;
+    display: flex;
+    justify-content: space-between;
+}
+
 body {
     text-align: center;
 }
@@ -63,10 +86,16 @@ body {
 #rotate-button {
     position: absolute;
     left: 10px;
-    top: 210px;
+    top: 400px;
+
 }
 
 #start-button {
+    position: absolute;
+    top: 400px;
+}
+
+#info {
     position: relative;
-    top: 10px;
+    top: 30px;
 }
