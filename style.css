@@ -3,7 +3,7 @@
     height:200px;
     border: black 1px;
     display: flex;
-    flex-wrap: w
+    flex-wrap: wrap;
     
 }
 
@@ -60,7 +60,7 @@ body {
 }
 
 .ship3 {
-    background-color: green;
+    background-color: violet;
 }
 
 .ship4-preview {
@@ -93,6 +93,7 @@ body {
 #start-button {
     position: absolute;
     top: 400px;
+    left: 48.5%;
 }
 
 #info {
