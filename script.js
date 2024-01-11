@@ -2,14 +2,44 @@ const gameContainer = document.getElementById("game-container")
 const shipContainer = document.querySelector('.ship-container')
 const rotateButton = document.querySelector('#rotate-button')
 const shipArr = Array.from(shipContainer.children)
-let angle = [0, 0, 0, 0, 0]
+const startButton = document.querySelector('#start-button')
+const infoDisplay = document.querySelector('#info')
+const turnDisplay = document.querySelector('#turn-display')
 
-function rotat_all() {
-    angle.forEach((e, i, arr) => arr[i] = arr[i] === 0 ? 90 : 0)
-    for (let i = 0; i < 5; i++) {
-        shipArr[i].style.transform = `rotate(${angle[i]}deg)`
+
+class Ship {
+    constructor(name, length, angle) {
+        this.name = name;
+        this.length = length;
+        this.angle = angle;
+    }
+    /**
+     * @param {any} angle
+     */
+    set setAng(angle) {
+        this.angle = angle
     }
 
+    get getAng() {
+        return this.angle
+    }
+}
+
+const ship1 = new Ship('ship1', 2, 0)
+const ship2 = new Ship('ship2', 2, 0)
+const ship3 = new Ship('ship3', 3, 0)
+const ship4 = new Ship('ship4', 3, 0)
+const ship5 = new Ship('ship5', 4, 0)
+const ships = [ship1, ship2, ship3, ship4, ship5]
+
+function rotat_all() {
+    for (let i = 0; i < ships.length; i++) {
+        if (ships[i].getAng === 0) ships[i].setAng = 90
+        else ships[i].setAng = 0
+    }
+    for (let i = 0; i < 5; i++) {
+        shipArr[i].style.transform = `rotate(${ships[i].getAng}deg)`
+    }
 }
 const side = 10;
 function createBoard(color, user) {
@@ -29,47 +59,46 @@ function createBoard(color, user) {
 createBoard('gray', 'p')
 createBoard('green', 'c')
 
-class Ship {
-    constructor(name, length) {
-        this.name = name;
-        this.length = length;
+let notDropped
+
+function getValidity(cBlocks, isHorizontal, startId, ship) {
+    if (startId) {
+        var pushH = startId
+        var pushV = startId
+    } else {
+        var pushH_t = Math.floor(Math.random() * side) * side
+        var pushH_o = Math.floor(Math.random() * (side + 1 - ship.length))
+        var pushH = pushH_t + pushH_o
+
+        var pushV_t = Math.floor(Math.random() * (side + 1 - ship.length)) * side
+        var pushV_o = Math.floor(Math.random() * side)
+        var pushV = pushV_t + pushV_o
     }
-}
 
-const ship1 =  new Ship('ship1', 2)
-const ship2 =  new Ship('ship2', 2)
-const ship3 =  new Ship('ship3', 3)
-const ship4 =  new Ship('ship4', 3)
-const ship5 =  new Ship('ship5', 4)
 
-const ships = [ship1, ship2, ship3, ship4, ship5]
 
-function addShipPiece(ship) {
-    const cBlocks = document.querySelectorAll('#c div')
-    let randomBool = Math.random() < 0.5
-    let isHorizontal = randomBool
-    let rsi = Math.floor(Math.random()*side*side)
-
-    /* boolean ensuring starting pos is valid */ 
-    let validStart = isHorizontal ? rsi <= side*side - ship.length ? rsi : side*side-ship.length : // horizontal check
-        rsi <= side*side-side*ship.length ? rsi : rsi - ship.length*side+side // vertical check
-    
     let shipBlocks = []
-    // Custom ship-generating algorithm cuz the one in the video doesn't work lol
-    let pushH_t = Math.floor(Math.random() * side) * side
-    let pushH_o = Math.floor(Math.random() * (side+1-ship.length))
-    let pushH = pushH_t + pushH_o
+    if (startId) {
+        for (let i = 0; i < ship.length; i++) {
+            if (isHorizontal) {
+                pushH = Number(pushH)
+                shipBlocks.push(pBlocks[i + (pushH)])
+                console.log(pBlocks[i + (pushH)])
 
-    let pushV_t = Math.floor(Math.random() * (side+1 - ship.length)) * side
-    let pushV_o = Math.floor(Math.random() * side)
-    let pushV = pushV_t + pushV_o
-    for(let i = 0; i < ship.length; i++) {
-        if(isHorizontal) {
-            console.log(i+pushH)
-            shipBlocks.push(cBlocks[i+pushH])
-        } else {
-            console.log(i*side+pushV)
-            shipBlocks.push(cBlocks[i*side+pushV])
+            } else {
+                pushV = Number(pushV)
+                shipBlocks.push(pBlocks[i * side + pushV])
+                console.log(pBlocks[i * side + pushV])
+            }
+        }
+    }
+    else {
+        for (let i = 0; i < ship.length; i++) {
+            if (isHorizontal) {
+                shipBlocks.push(cBlocks[i + pushH])
+            } else {
+                shipBlocks.push(cBlocks[i * side + pushV])
+            }
         }
     }
 
@@ -86,17 +115,81 @@ function addShipPiece(ship) {
 
     const notTaken = shipBlocks.every(s => !s.classList.contains('taken<3'))
 
+    return { shipBlocks, valid, notTaken }
+}
+
+function addShipPiece(user, ship, startId) {
+
+    /* boolean ensuring starting pos is valid */
+    // let validStart = isHorizontal ? startIdx <= side * side - ship.length ? startIdx : side * side - ship.length : // horizontal check
+    //     startIdx <= side * side - side * ship.length ? startIdx : startIdx - ship.length * side + side // vertical check
+
+    // const pBlocks = document.querySelectorAll('#p div')
+    user === 'p' ? console.log('p') : console.log('c')
+    const cBlocks = document.querySelectorAll(`#${user} div`)
+    // console.log(cBlocks)
+    let randomBool = Math.random() < 0.5
+    let isHorizontal = user === 'p' ? ship.getAng === 0 : randomBool
+    // let rsi = Math.floor(Math.random() * side * side)
+
+    const { shipBlocks, valid, notTaken } = getValidity(cBlocks, isHorizontal, startId, ship)
+
     if (valid && notTaken) {
         shipBlocks.forEach(s => {
             s.classList.add(ship.name)
             s.classList.add('taken<3')
+
         })
     } 
     else {
-        addShipPiece(ship)
+        if (user === 'c') addShipPiece('c', ship)
+        if (user === 'p') {
+            console.log('player dropped')
+            notDropped = true
+        }
     }
 }
-ships.forEach(s => addShipPiece(s))
+
+ships.forEach(s => addShipPiece('c', s))
+
+let curr_ship
+const shipArrCopy = Array.from(shipContainer.children)
+const pBlocks = document.querySelectorAll('#p div')
+shipArrCopy.forEach(s => s.addEventListener('dragstart', testDragged))
+pBlocks.forEach(b => {
+    b.addEventListener('dragover', dragOver)
+    b.addEventListener('drop', dropShip)
+    b.addEventListener('click', returnShip)
+})
+
+function testDragged(e) {
+    notDropped = false
+    curr_ship = e.target
+}
+
+function dragOver(e) {
+    e.preventDefault()
+}
+
+function dropShip(e) {
+    const startID = e.target.id
+    const ship = ships[curr_ship.id]
+    console.log(ship)
+    console.log(startID)
+    addShipPiece('p', ship, startID)
+    if (!notDropped) {
+        // curr_ship.removeEventListener('dragover', testDragged)
+        curr_ship.setAttribute('draggable', false)
+        curr_ship.remove()
+    }
+}
+
+function returnShip(e) {
+    if (e.target.classList.contains("taken<3")) {
+        let shipName = e.target.classList[1];
+        e.target.classList.remove(shipName)
+    }
+}
 
 rotateButton.addEventListener('click', rotat_all)
 shipArr[0].addEventListener('click', () => {
@@ -120,5 +213,20 @@ shipArr[4].addEventListener('click', () => {
     shipArr[4].style.transform = `rotate(${angle[4]}deg)`
 })
 
-// const optionShips = Array.from(optionContainer.children)
-// optionShips.forEach(optionShip => optionShip)
+
+
+let gameOver = false
+let playerTurn
+
+function startGame() {
+    if (shipContainer.children.length != 0) {
+        infoDisplay.textContent = 'Please place your ships.'
+    } else {
+
+        infoDisplay.textContent = ''
+        const allBoardBlocks = document.querySelectorAll('#computer div')
+        allBoar
+    }
+}
+
+startButton.addEventListener('click', startGame)

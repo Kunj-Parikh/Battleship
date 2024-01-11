@@ -1,17 +1,17 @@
 .boards {
     width: 200px;
-    height:200px;
+    height: 200px;
     border: black 1px;
     display: flex;
     flex-wrap: wrap;
-    
+
 }
 
 .block {
     width: 20px;
     height: 20px;
-    /* border: solid 1px black;
-    box-sizing: border-box; */
+    border: solid 1px black;
+    box-sizing: border-box;
 }
 
 
@@ -83,6 +83,10 @@ body {
     background-color: purple;
 }
 
+.ship {
+    cursor: pointer;
+}
+
 #rotate-button {
     position: absolute;
     left: 10px;
@@ -94,6 +98,7 @@ body {
     position: absolute;
     top: 400px;
     left: 48.5%;
+
 }
 
 #info {
