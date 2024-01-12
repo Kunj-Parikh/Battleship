@@ -1,10 +1,10 @@
 const gameContainer = document.getElementById("game-container")
 const shipContainer = document.querySelector('.ship-container')
 const rotateButton = document.querySelector('#rotate-button')
-const shipArr = Array.from(shipContainer.children)
 const startButton = document.querySelector('#start-button')
 const infoDisplay = document.querySelector('#info')
 const turnDisplay = document.querySelector('#turn-display')
+const shipArr = Array.from(shipContainer.children)
 
 
 class Ship {
@@ -47,7 +47,7 @@ function createBoard(color, user) {
     board.classList.add('boards')
     board.style.backgroundColor = color
     board.id = user
-    for(let i = 0; i<side*side; i++) {
+    for (let i = 0; i < side * side; i++) {
         const block = document.createElement('div')
         block.classList.add('block')
         block.id = i
@@ -101,15 +101,15 @@ function getValidity(cBlocks, isHorizontal, startId, ship) {
             }
         }
     }
-
+    
     let valid
 
     if (isHorizontal) {
-        shipBlocks.every((_s, i) => 
-            valid = shipBlocks[0].id % side !== side - (shipBlocks.length - (i+1)))
+        shipBlocks.every((_s, i) =>
+            valid = shipBlocks[0].id % side !== side - (shipBlocks.length - (i + 1)))
     }
     else {
-        shipBlocks.every((_s, i) => 
+        shipBlocks.every((_s, i) =>
             valid = shipBlocks[0].id < 90 + (side * i + 1))
     }
 
@@ -140,7 +140,7 @@ function addShipPiece(user, ship, startId) {
             s.classList.add('taken<3')
 
         })
-    } 
+    }
     else {
         if (user === 'c') addShipPiece('c', ship)
         if (user === 'p') {
@@ -193,24 +193,24 @@ function returnShip(e) {
 
 rotateButton.addEventListener('click', rotat_all)
 shipArr[0].addEventListener('click', () => {
-    angle[0] = angle[0] == 0 ? 90 : 0
-    shipArr[0].style.transform = `rotate(${angle[0]}deg)`
+    ships[0].setAng = ships[0].getAng === 0 ? 90 : 0
+    shipArr[0].style.transform = `rotate(${ships[0].getAng}deg)`
 })
 shipArr[1].addEventListener('click', () => {
-    angle[1] = angle[1] == 0 ? 90 : 0
-    shipArr[1].style.transform = `rotate(${angle[1]}deg)`
+    ships[1].setAng = ships[1].getAng === 0 ? 90 : 0
+    shipArr[1].style.transform = `rotate(${ships[1].getAng}deg)`
 })
 shipArr[2].addEventListener('click', () => {
-    angle[2] = angle[2] == 0 ? 90 : 0
-    shipArr[2].style.transform = `rotate(${angle[2]}deg)`
+    ships[2].setAng = ships[2].getAng === 0 ? 90 : 0
+    shipArr[2].style.transform = `rotate(${ships[2].getAng}deg)`
 })
 shipArr[3].addEventListener('click', () => {
-    angle[3] = angle[3] == 0 ? 90 : 0
-    shipArr[3].style.transform = `rotate(${angle[3]}deg)`
+    ships[3].setAng = ships[3].getAng === 0 ? 90 : 0
+    shipArr[3].style.transform = `rotate(${ships[3].getAng}deg)`
 })
 shipArr[4].addEventListener('click', () => {
-    angle[4] = angle[4] == 0 ? 90 : 0
-    shipArr[4].style.transform = `rotate(${angle[4]}deg)`
+    ships[4].setAng = ships[4].getAng === 0 ? 90 : 0
+    shipArr[4].style.transform = `rotate(${ships[4].getAng}deg)`
 })
 
 
@@ -224,7 +224,7 @@ function startGame() {
     } else {
 
         infoDisplay.textContent = ''
-        const allBoardBlocks = document.querySelectorAll('#computer div')
+        const allBoardBlocks = document.querySelectorAll('#c div')
         allBoar
     }
 }
