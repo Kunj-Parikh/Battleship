@@ -87,6 +87,10 @@ body {
     cursor: pointer;
 }
 
+.shot {
+    background-color: red;
+}
+
 #rotate-button {
     position: absolute;
     left: 10px;
