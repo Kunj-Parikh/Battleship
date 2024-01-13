@@ -1,3 +1,26 @@
+.boards {
+    width: 200px;
+    height: 200px;
+    border: black 1px;
+    display: flex;
+    flex-wrap: wrap;
+
+}
+
+.block {
+    width: 20px;
+    height: 20px;
+    border: solid 1px black;
+    box-sizing: border-box;
+}
+
+
+#game-container {
+    width: 500px;
+    display: flex;
+    justify-content: space-between;
+}
+
 body {
     text-align: center;
 }
@@ -37,7 +60,7 @@ body {
 }
 
 .ship3 {
-    background-color: green;
+    background-color: violet;
 }
 
 .ship4-preview {
@@ -58,4 +81,31 @@ body {
 
 .ship5 {
     background-color: purple;
+}
+
+.ship {
+    cursor: pointer;
+}
+
+.shot {
+    background-color: red;
+}
+
+#rotate-button {
+    position: absolute;
+    left: 10px;
+    top: 400px;
+
+}
+
+#start-button {
+    position: absolute;
+    top: 400px;
+    left: 48.5%;
+
+}
+
+#info {
+    position: relative;
+    top: 30px;
 }
