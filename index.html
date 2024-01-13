@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Battleship</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
+    <script defer src="script.js"></script>
 </head>
 
 <body>
@@ -18,18 +18,23 @@
     </div>
 
     <!-- gameboards -->
-    <div id="game-container"></div>
+    <div id="game-container">
+
+    </div>
+    
     <!-- ships -->
     <div class="ship-container">
-        <div class="ship1-preview ship1" draggable="true"></div>
-        <div class="ship2-preview ship2" draggable="true"></div>
-        <div class="ship3-preview ship3" draggable="true"></div>
-        <div class="ship4-preview ship4" draggable="true"></div>
-        <div class="ship5-preview ship5" draggable="true"></div>
+        <div id="0" class="ship1-preview ship1 ship" draggable="true"></div>
+        <div id="1" class="ship2-preview ship2 ship" draggable="true"></div>
+        <div id="2" class="ship3-preview ship3 ship" draggable="true"></div>
+        <div id="3" class="ship4-preview ship4 ship" draggable="true"></div>
+        <div id="4" class="ship5-preview ship5 ship" draggable="true"></div>
     </div>
 
-    <button id="rotate-button">ROTATE</button>
+    <button id="rotate-button">ROTATE ALL</button>
     <button id="start-button">START</button>
+    
+    <p style="text-align:left" id="info-box">Click on each individual ship to rotate it!</p>
 </body>
 
 </html>
