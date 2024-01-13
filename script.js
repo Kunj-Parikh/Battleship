@@ -41,7 +41,6 @@ function rotat_all() {
         shipArr[i].style.transform = `rotate(${ships[i].getAng}deg)`
     }
 }
-
 const side = 10;
 function createBoard(color, user) {
     const board = document.createElement('div')
@@ -102,7 +101,7 @@ function getValidity(cBlocks, isHorizontal, startId, ship) {
             }
         }
     }
-
+    
     let valid
 
     if (isHorizontal) {
@@ -188,17 +187,7 @@ function dropShip(e) {
 function returnShip(e) {
     if (e.target.classList.contains("taken<3")) {
         let shipName = e.target.classList[1];
-        // -- let shipPreview = e.target.c
-        //e.target.classList.remove(shipName)
-        pBlocks.forEach((b) => {
-            if (b.classList.contains(shipName)) {
-                b.classList.remove(shipName, "taken<3")
-            }
-        })
-
-
-
-        //shipArrCopy.push(curr_ship)
+        e.target.classList.remove(shipName)
     }
 }
 
@@ -230,61 +219,14 @@ let gameOver = false
 let playerTurn
 
 function startGame() {
-    const allBoardBlocks = document.querySelectorAll('#c div')
-    allBoardBlocks.forEach(b => b.addEventListener('click', handleClick))
-    /*
     if (shipContainer.children.length != 0) {
         infoDisplay.textContent = 'Please place your ships.'
     } else {
+
         infoDisplay.textContent = ''
         const allBoardBlocks = document.querySelectorAll('#c div')
-        allBoardBlocks.forEach(b => b.addEventListener('click', handleClick))
-    }*/
-}
-
-
-let pHits = []
-let cHits = []
-function handleClick(e) {
-    if (!gameOver) {
-        if (e.target.classList.contains('taken<3')) {
-            e.target.classList.add("shot")
-            
-            infoDisplay.textContent = `Computer ship has been shot, at position (${e.target.id % 10 + 1}, ${Math.floor(e.target.id/10) + 1})`
-            let classes = Array.from(e.target.classList)
-            classes = classes.filter(n => n !== 'block')
-            classes = classes.filter(n => n !== 'shot')
-            classes = classes.filter(n => n !== 'taken<3')
-            pHits.push(...classes)   }
-        if (!e.target.classList.contains('taken<3')) {
-            infoDisplay.textContent = 'Miss!'
-            e.target.classList.add('empty')
-        }
-        playerTurn = false
-        const cBlocks = document.querySelectorAll('#c div')
-        cBlocks.forEach(b => b.replaceWith(b.cloneNode(true)))
-        // setTimeout(computerGo, 3000)
+        allBoar
     }
 }
-
-// function computerGo() {
-//     if (!gameOver) {
-//         turnDisplay.textContent = "Computer's turn"
-//         infoDisplay.textContent = 'Computer thinking...'
-//         setTimeout(() => {
-//             let randomGo = Math.floor(Math.random()*side*side)
-//             const pBlocks = document.querySelectorAll('#p div')
-//             if (pBlocks[randomGo].classList.contains('taken<3') && pBlocks[randomGo].classList.contains('shot')) {
-//                 coomputerGo()
-//                 return
-//             } else if (pBlocks[randomGo].classList.contains('taken<3') && !pBlocks[randomGo].classList.contains('shot')) {
-//                 pBlocks[randomGo].classList.add('shot')
-//                 infoDisplay.textContent= `Computer shot your ship at position ${pBlocks[randomGo].target.id}`
-//             }
-//         })
-        
-//     }
-    
-// }
 
 startButton.addEventListener('click', startGame)
