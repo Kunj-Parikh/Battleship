@@ -1,3 +1,4 @@
+
 .boards {
     width: 200px;
     height: 200px;
@@ -13,6 +14,8 @@
     border: solid 1px black;
     box-sizing: border-box;
 }
+
+
 
 
 #game-container {
@@ -87,6 +90,16 @@ body {
     cursor: pointer;
 }
 
+.shot {
+    /* width: 20px;
+    height: 20px; */
+    /* z-index: -1;
+    position: relative; */
+    /* border: solid 1px rgb(255, 0, 0); */
+    background-color: red;
+    /* box-sizing: border-box; */
+}
+
 #rotate-button {
     position: absolute;
     left: 10px;
@@ -105,3 +118,4 @@ body {
     position: relative;
     top: 30px;
 }
+
