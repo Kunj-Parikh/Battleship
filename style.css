@@ -40,7 +40,7 @@ body {
 }
 
 .ship1 {
-    background-color: red;
+    background-color: maroon;
 }
 
 .ship2-preview {
@@ -86,6 +86,10 @@ body {
 .ship {
     cursor: pointer;
 }
+/* #computer .ship1,
+#computer .ship2 {
+    background-color: green !important;
+} */
 
 .shot {
     background-color: red;
@@ -109,3 +113,20 @@ body {
     position: relative;
     top: 30px;
 }
+
+#c .ship1,
+#c .ship2,
+#c .ship3,
+#c .ship4,
+#c .ship5 {
+    background-color: green;
+}
+
+.shot {
+    background-color: red !important;
+}
+
+.miss {
+    background-color: rgb(28, 28, 30) !important;
+}
+

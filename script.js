@@ -9,9 +9,9 @@ const shipArr = Array.from(shipContainer.children)
 
 class Ship {
     constructor(name, length, angle) {
-        this.name = name;
-        this.length = length;
-        this.angle = angle;
+        this.name = name
+        this.length = length
+        this.angle = angle
     }
     /**
      * @param {any} angle
@@ -42,7 +42,7 @@ function rotat_all() {
     }
 }
 
-const side = 10;
+const side = 10
 function createBoard(color, user) {
     const board = document.createElement('div')
     board.classList.add('boards')
@@ -187,7 +187,7 @@ function dropShip(e) {
 
 function returnShip(e) {
     if (e.target.classList.contains("taken<3")) {
-        let shipName = e.target.classList[1];
+        let shipName = e.target.classList[1]
         // -- let shipPreview = e.target.c
         //e.target.classList.remove(shipName)
         pBlocks.forEach((b) => {
@@ -251,13 +251,18 @@ function startGame() {
 
 let pHits = []
 let cHits = []
+let pTotal = []
+let cTotal = []
 // Player/Computer Sunk Ships (P/CSS)
 let pss = []
 let css = []
 
 function handleClick(e) {
     if (!gameOver) {
-        if (e.target.classList.contains('taken<3')) {
+        if(pTotal.includes(e.target.id)) {
+            infoDisplay.textContent = 'You have already shot there. Try again.'
+            return
+        } else if (e.target.classList.contains('taken<3')) {
             e.target.classList.add("shot")
             
             infoDisplay.textContent = `Computer ship has been shot, at position (${e.target.id % 10 + 1}, ${Math.floor(e.target.id/10) + 1})`
@@ -267,15 +272,16 @@ function handleClick(e) {
             classes = classes.filter(n => n !== 'taken<3')
             pHits.push(...classes)
             checkScore('p', pHits, pss)
+        } else {
+            infoDisplay.textContent = 'You missed!'
+            e.target.classList.add('miss')
         }
-        if (!e.target.classList.contains('taken<3')) {
-            infoDisplay.textContent = 'Miss!'
-            e.target.classList.add('empty')
-        }
+        pTotal.push(e.target.id)
         playerTurn = false
+
         const cBlocks = document.querySelectorAll('#c div')
         cBlocks.forEach(b => b.replaceWith(b.cloneNode(true)))
-        setTimeout(computerGo, 3000)
+        setTimeout(computerGo, 1000)
     }
 }
 
@@ -285,6 +291,12 @@ function computerGo() {
         infoDisplay.textContent = 'Computer thinking...'
         setTimeout(() => {
             let randomGo = Math.floor(Math.random()*side*side)
+            // Reload randomGo until it is not in cTotal
+            while(cTotal.includes(randomGo)) {
+                randomGo = Math.floor(Math.random()*side*side)
+            }
+            cTotal.push(randomGo)
+            //console.log(cTotal)
             const pBlocks = document.querySelectorAll('#p div')
             if (pBlocks[randomGo].classList.contains('taken<3') && pBlocks[randomGo].classList.contains('shot')) {
                 computerGo()
@@ -300,10 +312,9 @@ function computerGo() {
                 checkScore('c', cHits, css)
             } else {
                 infoDisplay.textContent= `Computer missed at position ${pBlocks[randomGo].id}`
-                pBlocks[randomGo].classList.add('empty')
+                pBlocks[randomGo].classList.add('miss')
             }
-
-        }, 3000)
+        }, 1000)
         
         setTimeout(() => {
             playerTurn = true
@@ -311,7 +322,7 @@ function computerGo() {
             infoDisplay.textContent = 'Please take your turn'
             const cBlocks = document.querySelectorAll('#c div')
             cBlocks.forEach(b => b.addEventListener('click', handleClick))
-        }, 6000);
+        }, 2000)
     }    
 }
 
@@ -332,11 +343,11 @@ function checkScore(usr, usr_hits, usr_ss) {
 
     if(pss.length === 5) {
         infoDisplay.textContent = "You won by sinking all of the computer's ships"
-        gameOver = true;
+        gameOver = true
     }
     if(css.length === 5) {
         infoDisplay.textContent = 'Computer sunk all your ships. How could you lose to such a trash program.'
-        gameOver = true;
+        gameOver = true
     }
 }
 
