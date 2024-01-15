@@ -4,14 +4,14 @@ const rotateButton = document.querySelector('#rotate-button')
 const startButton = document.querySelector('#start-button')
 const infoDisplay = document.querySelector('#info')
 const turnDisplay = document.querySelector('#turn-display')
-const shipArr = Array.from(shipContainer.children)
+let shipArr = Array.from(shipContainer.children)
 
 
 class Ship {
     constructor(name, length, angle) {
-        this.name = name;
-        this.length = length;
-        this.angle = angle;
+        this.name = name
+        this.length = length
+        this.angle = angle
     }
     /**
      * @param {any} angle
@@ -32,17 +32,40 @@ const ship4 = new Ship('ship4', 3, 0)
 const ship5 = new Ship('ship5', 4, 0)
 const ships = [ship1, ship2, ship3, ship4, ship5]
 
+rotateButton.addEventListener('click', rotat_all)
+shipArr[0].addEventListener('click', () => {
+    ships[0].setAng = ships[0].getAng === 0 ? 90 : 0
+    shipArr[0].style.transform = `rotate(${ships[0].getAng}deg)`
+})
+shipArr[1].addEventListener('click', () => {
+    ships[1].setAng = ships[1].getAng === 0 ? 90 : 0
+    shipArr[1].style.transform = `rotate(${ships[1].getAng}deg)`
+})
+shipArr[2].addEventListener('click', () => {
+    ships[2].setAng = ships[2].getAng === 0 ? 90 : 0
+    shipArr[2].style.transform = `rotate(${ships[2].getAng}deg)`
+})
+shipArr[3].addEventListener('click', () => {
+    ships[3].setAng = ships[3].getAng === 0 ? 90 : 0
+    shipArr[3].style.transform = `rotate(${ships[3].getAng}deg)`
+})
+shipArr[4].addEventListener('click', () => {
+    ships[4].setAng = ships[4].getAng === 0 ? 90 : 0
+    shipArr[4].style.transform = `rotate(${ships[4].getAng}deg)`
+})
+
 function rotat_all() {
     for (let i = 0; i < ships.length; i++) {
         if (ships[i].getAng === 0) ships[i].setAng = 90
         else ships[i].setAng = 0
     }
-    for (let i = 0; i < 5; i++) {
-        shipArr[i].style.transform = `rotate(${ships[i].getAng}deg)`
+    for (let i = 0; i < shipArr.length; i++) {
+        console.log('transforming ' + i)
+        shipArr[i].style.transform = `rotate(${ships[shipArr[i].id].getAng}deg)`
     }
 }
 
-const side = 10;
+const side = 10
 function createBoard(color, user) {
     const board = document.createElement('div')
     board.classList.add('boards')
@@ -76,20 +99,19 @@ function getValidity(cBlocks, isHorizontal, startId, ship) {
         var pushV = pushV_t + pushV_o
     }
 
-
-
+    
     let shipBlocks = []
     if (startId) {
         for (let i = 0; i < ship.length; i++) {
             if (isHorizontal) {
                 pushH = Number(pushH)
                 shipBlocks.push(pBlocks[i + (pushH)])
-                console.log(pBlocks[i + (pushH)])
+                //console.log(pBlocks[i + (pushH)])
 
             } else {
                 pushV = Number(pushV)
                 shipBlocks.push(pBlocks[i * side + pushV])
-                console.log(pBlocks[i * side + pushV])
+                //console.log(pBlocks[i * side + pushV])
             }
         }
     }
@@ -126,9 +148,8 @@ function addShipPiece(user, ship, startId) {
     //     startIdx <= side * side - side * ship.length ? startIdx : startIdx - ship.length * side + side // vertical check
 
     // const pBlocks = document.querySelectorAll('#p div')
-    user === 'p' ? console.log('p') : console.log('c')
+    //user === 'p' ? console.log('p') : console.log('c')
     const cBlocks = document.querySelectorAll(`#${user} div`)
-    // console.log(cBlocks)
     let randomBool = Math.random() < 0.5
     let isHorizontal = user === 'p' ? ship.getAng === 0 : randomBool
     // let rsi = Math.floor(Math.random() * side * side)
@@ -145,7 +166,6 @@ function addShipPiece(user, ship, startId) {
     else {
         if (user === 'c') addShipPiece('c', ship)
         if (user === 'p') {
-            console.log('player dropped')
             notDropped = true
         }
     }
@@ -154,7 +174,7 @@ function addShipPiece(user, ship, startId) {
 ships.forEach(s => addShipPiece('c', s))
 
 let curr_ship
-const shipArrCopy = Array.from(shipContainer.children)
+let shipArrCopy = Array.from(shipContainer.children)
 const pBlocks = document.querySelectorAll('#p div')
 shipArrCopy.forEach(s => s.addEventListener('dragstart', testDragged))
 pBlocks.forEach(b => {
@@ -175,9 +195,13 @@ function dragOver(e) {
 function dropShip(e) {
     const startID = e.target.id
     const ship = ships[curr_ship.id]
-    console.log(ship)
-    console.log(startID)
+    // console.log(shipName)
+    // console.log(ship)
+    // console.log(curr_ship.id)
+    // console.log(startID)
     addShipPiece('p', ship, startID)
+    shipArr.splice(curr_ship.id, 1)
+    shipArrCopy.splice(curr_ship.id, 1)
     if (!notDropped) {
         // curr_ship.removeEventListener('dragover', testDragged)
         curr_ship.setAttribute('draggable', false)
@@ -185,9 +209,11 @@ function dropShip(e) {
     }
 }
 
+var pushBack = 0
 function returnShip(e) {
+    console.log(e.target.classList)
     if (e.target.classList.contains("taken<3")) {
-        let shipName = e.target.classList[1];
+        let shipName = e.target.classList[1]
         // -- let shipPreview = e.target.c
         //e.target.classList.remove(shipName)
         pBlocks.forEach((b) => {
@@ -196,58 +222,73 @@ function returnShip(e) {
             }
         })
 
+        let shipNum = shipName.substring(4, 5)
+        const newShip = document.createElement('div')
+        newShip.id = shipNum - 1
+        newShip.classList.add(`${shipName}-preview`)
+        newShip.classList.add(`${shipName}`)
+        newShip.classList.add('ship')
+        newShip.draggable = true
+        shipContainer.appendChild(newShip)
+        shipArr = Array.from(shipContainer.children)
+        shipArrCopy = Array.from(shipContainer.children)
 
+        ships[newShip.id].setAng = 0
 
-        //shipArrCopy.push(curr_ship)
+        // Check for buggy code below(probably fixed but maybe some bug still remains???)
+        for (let i=0; i<shipArr.length; i++) {
+            let new_elm = shipArr[i].cloneNode(true)
+            shipArr[i].parentNode.replaceChild(new_elm, shipArr[i])
+            new_elm.addEventListener('click', () => {
+                ships[new_elm.id].setAng = ships[new_elm.id].getAng === 0 ? 90 : 0
+                new_elm.style.transform = `rotate(${ships[new_elm.id].getAng}deg)`
+            })
+            shipArr[i] = new_elm
+            shipArrCopy[i] = new_elm
+        }
+
+        shipArrCopy.forEach(s => s.addEventListener('dragstart', testDragged))
     }
 }
-
-rotateButton.addEventListener('click', rotat_all)
-shipArr[0].addEventListener('click', () => {
-    ships[0].setAng = ships[0].getAng === 0 ? 90 : 0
-    shipArr[0].style.transform = `rotate(${ships[0].getAng}deg)`
-})
-shipArr[1].addEventListener('click', () => {
-    ships[1].setAng = ships[1].getAng === 0 ? 90 : 0
-    shipArr[1].style.transform = `rotate(${ships[1].getAng}deg)`
-})
-shipArr[2].addEventListener('click', () => {
-    ships[2].setAng = ships[2].getAng === 0 ? 90 : 0
-    shipArr[2].style.transform = `rotate(${ships[2].getAng}deg)`
-})
-shipArr[3].addEventListener('click', () => {
-    ships[3].setAng = ships[3].getAng === 0 ? 90 : 0
-    shipArr[3].style.transform = `rotate(${ships[3].getAng}deg)`
-})
-shipArr[4].addEventListener('click', () => {
-    ships[4].setAng = ships[4].getAng === 0 ? 90 : 0
-    shipArr[4].style.transform = `rotate(${ships[4].getAng}deg)`
-})
-
 
 
 let gameOver = false
 let playerTurn
 
 function startGame() {
-    const allBoardBlocks = document.querySelectorAll('#c div')
-    allBoardBlocks.forEach(b => b.addEventListener('click', handleClick))
-    /*
-    if (shipContainer.children.length != 0) {
-        infoDisplay.textContent = 'Please place your ships.'
-    } else {
-        infoDisplay.textContent = ''
+    if(playerTurn === undefined) {
         const allBoardBlocks = document.querySelectorAll('#c div')
         allBoardBlocks.forEach(b => b.addEventListener('click', handleClick))
-    }*/
+        
+        if (shipContainer.children.length !== 0) {
+            infoDisplay.textContent = 'Please place your ships.'
+        } else {
+            const allBoardBlocks = document.querySelectorAll('#c div')
+            allBoardBlocks.forEach(b => b.addEventListener('click', handleClick))
+            playerTurn = true
+            turnDisplay.textContent = 'Your turn'
+            infoDisplay.textContent = 'Game has started.'
+        }
+        
+    }
+    
 }
 
 
 let pHits = []
 let cHits = []
+let pTotal = []
+let cTotal = []
+// Player/Computer Sunk Ships (P/CSS)
+let pss = []
+let css = []
+
 function handleClick(e) {
     if (!gameOver) {
-        if (e.target.classList.contains('taken<3')) {
+        if(pTotal.includes(e.target.id)) {
+            infoDisplay.textContent = 'You have already shot there. Try again.'
+            return
+        } else if (e.target.classList.contains('taken<3')) {
             e.target.classList.add("shot")
             
             infoDisplay.textContent = `Computer ship has been shot, at position (${e.target.id % 10 + 1}, ${Math.floor(e.target.id/10) + 1})`
@@ -255,36 +296,85 @@ function handleClick(e) {
             classes = classes.filter(n => n !== 'block')
             classes = classes.filter(n => n !== 'shot')
             classes = classes.filter(n => n !== 'taken<3')
-            pHits.push(...classes)   }
-        if (!e.target.classList.contains('taken<3')) {
-            infoDisplay.textContent = 'Miss!'
-            e.target.classList.add('empty')
+            pHits.push(...classes)
+            checkScore('p', pHits, pss)
+        } else {
+            infoDisplay.textContent = 'You missed!'
+            e.target.classList.add('miss')
         }
+        pTotal.push(e.target.id)
         playerTurn = false
+
         const cBlocks = document.querySelectorAll('#c div')
         cBlocks.forEach(b => b.replaceWith(b.cloneNode(true)))
-        // setTimeout(computerGo, 3000)
+        setTimeout(computerGo, 1000)
     }
 }
 
-// function computerGo() {
-//     if (!gameOver) {
-//         turnDisplay.textContent = "Computer's turn"
-//         infoDisplay.textContent = 'Computer thinking...'
-//         setTimeout(() => {
-//             let randomGo = Math.floor(Math.random()*side*side)
-//             const pBlocks = document.querySelectorAll('#p div')
-//             if (pBlocks[randomGo].classList.contains('taken<3') && pBlocks[randomGo].classList.contains('shot')) {
-//                 coomputerGo()
-//                 return
-//             } else if (pBlocks[randomGo].classList.contains('taken<3') && !pBlocks[randomGo].classList.contains('shot')) {
-//                 pBlocks[randomGo].classList.add('shot')
-//                 infoDisplay.textContent= `Computer shot your ship at position ${pBlocks[randomGo].target.id}`
-//             }
-//         })
+function computerGo() {
+    if (!gameOver) {
+        turnDisplay.textContent = "Computer's turn"
+        infoDisplay.textContent = 'Computer thinking...'
+        setTimeout(() => {
+            let randomGo = Math.floor(Math.random()*side*side)
+            // Reload randomGo until it is not in cTotal
+            while(cTotal.includes(randomGo)) {
+                randomGo = Math.floor(Math.random()*side*side)
+            }
+            cTotal.push(randomGo)
+            //console.log(cTotal)
+            const pBlocks = document.querySelectorAll('#p div')
+            if (pBlocks[randomGo].classList.contains('taken<3') && pBlocks[randomGo].classList.contains('shot')) {
+                computerGo()
+                return
+            } else if (pBlocks[randomGo].classList.contains('taken<3') && !pBlocks[randomGo].classList.contains('shot')) {
+                pBlocks[randomGo].classList.add('shot')
+                infoDisplay.textContent= `Computer shot your ship at position ${pBlocks[randomGo].id}`
+                let classes = Array.from(pBlocks[randomGo].classList)
+                classes = classes.filter(n => n !== 'block')
+                classes = classes.filter(n => n !== 'shot')
+                classes = classes.filter(n => n !== 'taken<3')
+                cHits.push(...classes)
+                checkScore('c', cHits, css)
+            } else {
+                infoDisplay.textContent= `Computer missed at position ${pBlocks[randomGo].id}`
+                pBlocks[randomGo].classList.add('miss')
+            }
+        }, 1000)
         
-//     }
+        setTimeout(() => {
+            playerTurn = true
+            turnDisplay.textContent = 'Your turn'
+            infoDisplay.textContent = 'Please take your turn'
+            const cBlocks = document.querySelectorAll('#c div')
+            cBlocks.forEach(b => b.addEventListener('click', handleClick))
+        }, 2000)
+    }    
+}
+
+function checkScore(usr, usr_hits, usr_ss) {
+    function checkShip(sname, length) {
+        if(usr_hits.filter(hit => hit === sname).length === length) {
+            infoDisplay.textContent = `${usr} has sunk the opponent's ship named ${sname}!`
+            if(usr === 'p') {
+                pHits = usr_hits.filter(ship => ship !== sname)
+            } else if (usr === 'c') {
+                cHits = usr_hits.filter(ship => ship !== sname)
+            }
+            usr_ss.push(sname)
+        }
+    }
     
-// }
+    ships.forEach(s => checkShip(s.name, s.length))
+
+    if(pss.length === 5) {
+        infoDisplay.textContent = "You won by sinking all of the computer's ships"
+        gameOver = true
+    }
+    if(css.length === 5) {
+        infoDisplay.textContent = 'Computer sunk all your ships. How could you lose to such a trash program.'
+        gameOver = true
+    }
+}
 
 startButton.addEventListener('click', startGame)

@@ -40,7 +40,7 @@ body {
 }
 
 .ship1 {
-    background-color: red;
+    background-color: maroon;
 }
 
 .ship2-preview {
@@ -86,10 +86,10 @@ body {
 .ship {
     cursor: pointer;
 }
-
-.shot {
-    background-color: red;
-}
+/* #computer .ship1,
+#computer .ship2 {
+    background-color: green !important;
+} */
 
 #rotate-button {
     position: absolute;
@@ -109,3 +109,20 @@ body {
     position: relative;
     top: 30px;
 }
+
+#c .ship1,
+#c .ship2,
+#c .ship3,
+#c .ship4,
+#c .ship5 {
+    background-color: green;
+}
+
+#c div.block.shot, #p div.block.shot {
+    background-color: red;
+}
+
+#c div.block.miss, #p div.block.miss {
+    background-color: rgb(28, 28, 30);
+}
+
