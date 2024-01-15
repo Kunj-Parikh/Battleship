@@ -122,8 +122,8 @@ body {
     background-color: green;
 }
 
-.shot {
-    background-color: red !important;
+#c div.block.shot {
+    background-color: red;
 }
 
 .miss {

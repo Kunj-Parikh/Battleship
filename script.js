@@ -4,7 +4,7 @@ const rotateButton = document.querySelector('#rotate-button')
 const startButton = document.querySelector('#start-button')
 const infoDisplay = document.querySelector('#info')
 const turnDisplay = document.querySelector('#turn-display')
-const shipArr = Array.from(shipContainer.children)
+let shipArr = Array.from(shipContainer.children)
 
 
 class Ship {
@@ -32,13 +32,36 @@ const ship4 = new Ship('ship4', 3, 0)
 const ship5 = new Ship('ship5', 4, 0)
 const ships = [ship1, ship2, ship3, ship4, ship5]
 
+rotateButton.addEventListener('click', rotat_all)
+shipArr[0].addEventListener('click', () => {
+    ships[0].setAng = ships[0].getAng === 0 ? 90 : 0
+    shipArr[0].style.transform = `rotate(${ships[0].getAng}deg)`
+})
+shipArr[1].addEventListener('click', () => {
+    ships[1].setAng = ships[1].getAng === 0 ? 90 : 0
+    shipArr[1].style.transform = `rotate(${ships[1].getAng}deg)`
+})
+shipArr[2].addEventListener('click', () => {
+    ships[2].setAng = ships[2].getAng === 0 ? 90 : 0
+    shipArr[2].style.transform = `rotate(${ships[2].getAng}deg)`
+})
+shipArr[3].addEventListener('click', () => {
+    ships[3].setAng = ships[3].getAng === 0 ? 90 : 0
+    shipArr[3].style.transform = `rotate(${ships[3].getAng}deg)`
+})
+shipArr[4].addEventListener('click', () => {
+    ships[4].setAng = ships[4].getAng === 0 ? 90 : 0
+    shipArr[4].style.transform = `rotate(${ships[4].getAng}deg)`
+})
+
 function rotat_all() {
     for (let i = 0; i < ships.length; i++) {
         if (ships[i].getAng === 0) ships[i].setAng = 90
         else ships[i].setAng = 0
     }
-    for (let i = 0; i < 5; i++) {
-        shipArr[i].style.transform = `rotate(${ships[i].getAng}deg)`
+    for (let i = 0; i < shipArr.length; i++) {
+        console.log('transforming ' + i)
+        shipArr[i].style.transform = `rotate(${ships[shipArr[i].id].getAng}deg)`
     }
 }
 
@@ -76,8 +99,7 @@ function getValidity(cBlocks, isHorizontal, startId, ship) {
         var pushV = pushV_t + pushV_o
     }
 
-
-
+    
     let shipBlocks = []
     if (startId) {
         for (let i = 0; i < ship.length; i++) {
@@ -128,7 +150,6 @@ function addShipPiece(user, ship, startId) {
     // const pBlocks = document.querySelectorAll('#p div')
     //user === 'p' ? console.log('p') : console.log('c')
     const cBlocks = document.querySelectorAll(`#${user} div`)
-    // console.log(cBlocks)
     let randomBool = Math.random() < 0.5
     let isHorizontal = user === 'p' ? ship.getAng === 0 : randomBool
     // let rsi = Math.floor(Math.random() * side * side)
@@ -145,7 +166,6 @@ function addShipPiece(user, ship, startId) {
     else {
         if (user === 'c') addShipPiece('c', ship)
         if (user === 'p') {
-            //console.log('player dropped')
             notDropped = true
         }
     }
@@ -154,7 +174,7 @@ function addShipPiece(user, ship, startId) {
 ships.forEach(s => addShipPiece('c', s))
 
 let curr_ship
-const shipArrCopy = Array.from(shipContainer.children)
+let shipArrCopy = Array.from(shipContainer.children)
 const pBlocks = document.querySelectorAll('#p div')
 shipArrCopy.forEach(s => s.addEventListener('dragstart', testDragged))
 pBlocks.forEach(b => {
@@ -175,9 +195,13 @@ function dragOver(e) {
 function dropShip(e) {
     const startID = e.target.id
     const ship = ships[curr_ship.id]
-    //console.log(ship)
-    //console.log(startID)
+    // console.log(shipName)
+    // console.log(ship)
+    // console.log(curr_ship.id)
+    // console.log(startID)
     addShipPiece('p', ship, startID)
+    shipArr.splice(curr_ship.id, 1)
+    shipArrCopy.splice(curr_ship.id, 1)
     if (!notDropped) {
         // curr_ship.removeEventListener('dragover', testDragged)
         curr_ship.setAttribute('draggable', false)
@@ -185,7 +209,9 @@ function dropShip(e) {
     }
 }
 
+var pushBack = 0
 function returnShip(e) {
+    console.log(e.target.classList)
     if (e.target.classList.contains("taken<3")) {
         let shipName = e.target.classList[1]
         // -- let shipPreview = e.target.c
@@ -196,34 +222,34 @@ function returnShip(e) {
             }
         })
 
+        let shipNum = shipName.substring(4, 5)
+        const newShip = document.createElement('div')
+        newShip.id = shipNum - 1
+        newShip.classList.add(`${shipName}-preview`)
+        newShip.classList.add(`${shipName}`)
+        newShip.classList.add('ship')
+        newShip.draggable = true
+        shipContainer.appendChild(newShip)
+        shipArr = Array.from(shipContainer.children)
+        shipArrCopy = Array.from(shipContainer.children)
 
+        ships[newShip.id].setAng = 0
 
-        //shipArrCopy.push(curr_ship)
+        // Check for buggy code below(probably fixed but maybe some bug still remains???)
+        for (let i=0; i<shipArr.length; i++) {
+            let new_elm = shipArr[i].cloneNode(true)
+            shipArr[i].parentNode.replaceChild(new_elm, shipArr[i])
+            new_elm.addEventListener('click', () => {
+                ships[new_elm.id].setAng = ships[new_elm.id].getAng === 0 ? 90 : 0
+                new_elm.style.transform = `rotate(${ships[new_elm.id].getAng}deg)`
+            })
+            shipArr[i] = new_elm
+            shipArrCopy[i] = new_elm
+        }
+
+        shipArrCopy.forEach(s => s.addEventListener('dragstart', testDragged))
     }
 }
-
-rotateButton.addEventListener('click', rotat_all)
-shipArr[0].addEventListener('click', () => {
-    ships[0].setAng = ships[0].getAng === 0 ? 90 : 0
-    shipArr[0].style.transform = `rotate(${ships[0].getAng}deg)`
-})
-shipArr[1].addEventListener('click', () => {
-    ships[1].setAng = ships[1].getAng === 0 ? 90 : 0
-    shipArr[1].style.transform = `rotate(${ships[1].getAng}deg)`
-})
-shipArr[2].addEventListener('click', () => {
-    ships[2].setAng = ships[2].getAng === 0 ? 90 : 0
-    shipArr[2].style.transform = `rotate(${ships[2].getAng}deg)`
-})
-shipArr[3].addEventListener('click', () => {
-    ships[3].setAng = ships[3].getAng === 0 ? 90 : 0
-    shipArr[3].style.transform = `rotate(${ships[3].getAng}deg)`
-})
-shipArr[4].addEventListener('click', () => {
-    ships[4].setAng = ships[4].getAng === 0 ? 90 : 0
-    shipArr[4].style.transform = `rotate(${ships[4].getAng}deg)`
-})
-
 
 
 let gameOver = false
@@ -234,7 +260,7 @@ function startGame() {
         const allBoardBlocks = document.querySelectorAll('#c div')
         allBoardBlocks.forEach(b => b.addEventListener('click', handleClick))
         
-        if (shipContainer.children.length != 0) {
+        if (shipContainer.children.length !== 0) {
             infoDisplay.textContent = 'Please place your ships.'
         } else {
             const allBoardBlocks = document.querySelectorAll('#c div')
