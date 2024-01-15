@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battleship</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script defer src="script.js"></script>
+</head>
+
+<body>
+    <h1>Battleship</h1>
+    <div id="game-info">
+        <!-- Info/turn displays, will inject text into this -->
+        <p>Turn: <span id="turn-display"></span></p>
+        <p>Info: <span id="info"></span></p>
+    </div>
+
+    <!-- gameboards -->
+    <div id="game-container">
+
+    </div>
+    
+    <!-- ships -->
+    <div class="ship-container">
+        <div id="0" class="ship1-preview ship1 ship" draggable="true"></div>
+        <div id="1" class="ship2-preview ship2 ship" draggable="true"></div>
+        <div id="2" class="ship3-preview ship3 ship" draggable="true"></div>
+        <div id="3" class="ship4-preview ship4 ship" draggable="true"></div>
+        <div id="4" class="ship5-preview ship5 ship" draggable="true"></div>
+    </div>
+
+    <button id="rotate-button">ROTATE ALL</button>
+    <button id="start-button">START</button>
+    
+    <p style="text-align:left" id="info-box">Click on each individual ship to rotate it!</p>
+</body>
+
+</html>

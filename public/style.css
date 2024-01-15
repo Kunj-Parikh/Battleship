@@ -1,0 +1,128 @@
+.boards {
+    width: 200px;
+    height: 200px;
+    border: black 1px;
+    display: flex;
+    flex-wrap: wrap;
+
+}
+
+.block {
+    width: 20px;
+    height: 20px;
+    border: solid 1px black;
+    box-sizing: border-box;
+}
+
+
+#game-container {
+    width: 500px;
+    display: flex;
+    justify-content: space-between;
+}
+
+body {
+    text-align: center;
+}
+
+.ship-container {
+    width: 500px;
+    height: 50px;
+    background-color: yellow;
+    align-items: center;
+    display: flex;
+}
+
+.ship1-preview {
+    width: 20px;
+    height: 10px;
+    margin: 3px;
+}
+
+.ship1 {
+    background-color: maroon;
+}
+
+.ship2-preview {
+    width: 30px;
+    height: 10px;
+    margin: 3px;
+}
+
+.ship2 {
+    background-color: orange;
+}
+
+.ship3-preview {
+    width: 30px;
+    height: 10px;
+    margin: 3px;
+}
+
+.ship3 {
+    background-color: violet;
+}
+
+.ship4-preview {
+    width: 40px;
+    height: 10px;
+    margin: 3px;
+}
+
+.ship4 {
+    background-color: blue;
+}
+
+.ship5-preview {
+    width: 50px;
+    height: 10px;
+    margin: 3px;
+}
+
+.ship5 {
+    background-color: purple;
+}
+
+.ship {
+    cursor: pointer;
+}
+/* #computer .ship1,
+#computer .ship2 {
+    background-color: green !important;
+} */
+
+#rotate-button {
+    position: absolute;
+    left: 10px;
+    top: 400px;
+
+}
+
+#start-button {
+    position: absolute;
+    top: 400px;
+    left: 48.5%;
+
+}
+
+#info {
+    position: relative;
+    top: 30px;
+}
+
+#c .ship1,
+#c .ship2,
+#c .ship3,
+#c .ship4,
+#c .ship5 {
+    background-color: green;
+}
+
+#c div.block.shot, #p div.block.shot {
+    background-color: red;
+}
+
+#c div.block.miss, #p div.block.miss {
+    background-color: rgb(28, 28, 30);
+}
+
