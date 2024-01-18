@@ -160,7 +160,7 @@ for (let i=0; i<100; i++) {
     cArr.push(false)
 }
 
-// {shipBlocks, valid, notTaken}
+// Experimental AI code!
 blocks.forEach(e => (e.innerHTML = 0))
 blocks.forEach((e, i) => {
     console.log({e, i})
@@ -168,13 +168,12 @@ blocks.forEach((e, i) => {
     console.log(arr)
     console.log(e.innerHTML)
     console.log(arr.shipBlocks)
-    if (arr.valid && arr.notTaken) [
+    if (arr.valid && arr.notTaken) {
         arr.shipBlocks.forEach(e => {
             e.innerHTML++
         })
-    ]
+    }
 })
-console.log(getValidity(blocks, true, 7, ship1))
 
 let notDropped
 
