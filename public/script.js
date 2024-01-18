@@ -153,6 +153,29 @@ createBoard('gray', 'p')
 createBoard('green', 'c')
 const pBlocks = document.querySelectorAll('#p div')
 
+const blocks = document.querySelectorAll('#c div')
+let cArr = []
+let shipSizes = [2, 3, 3, 4, 5]
+for (let i=0; i<100; i++) {
+    cArr.push(false)
+}
+
+// {shipBlocks, valid, notTaken}
+blocks.forEach(e => (e.innerHTML = 0))
+blocks.forEach((e, i) => {
+    console.log({e, i})
+    let arr = getValidity(blocks, true, i, ship1)
+    console.log(arr)
+    console.log(e.innerHTML)
+    console.log(arr.shipBlocks)
+    if (arr.valid && arr.notTaken) [
+        arr.shipBlocks.forEach(e => {
+            e.innerHTML++
+        })
+    ]
+})
+console.log(getValidity(blocks, true, 7, ship1))
+
 let notDropped
 
 function getValidity(blocks, isHorizontal, startId, ship) {
@@ -161,10 +184,12 @@ function getValidity(blocks, isHorizontal, startId, ship) {
     console.log('startId: ' + startId)
     console.log('ship: ' + ship)
     if (startId || startId === 0) {
+        console.log('normal')
         var pushH = startId
         var pushV = startId
     } 
     else {
+        console.log('abnormal')
         var pushH_t = Math.floor(Math.random() * side) * side
         var pushH_o = Math.floor(Math.random() * (side + 1 - ship.length))
         var pushH = pushH_t + pushH_o
