@@ -13,5 +13,32 @@ server.listen(PORT, () => console.log('Running on port: ' + PORT))
 
 const connections = [null, null]
 io.on('connection', socket => {
-    console.log('Websocket connection made')
+    let playerIndex = -1
+    for (const i in connections) {
+        if (connections[i] === null) {
+            playerIndex = i
+            break
+        }
+    }
+
+    socket.emit('pNum', playerIndex)
+    console.log(`Player ${playerIndex} has connected! :D`)
+
+    if (playerIndex === -1) return
+
+    connections[playerIndex] = false
+
+    socket.broadcast.emit('pCon', playerIndex)
+
+    socket.on('disconnect', () => {
+        console.log(`Player ${playerIndex} has disconnected D:`)
+        connections[playerIndex] = null
+        socket.broadcast.emit('pCon', playerIndex)
+    })
+
+    socket.on('pReady', () => {
+        socket.broadcast.emit('eReady', playerIndex)
+        connections[playerIndex] = true
+    })
+
 })

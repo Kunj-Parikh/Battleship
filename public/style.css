@@ -94,7 +94,7 @@ body {
 #rotate-button {
     position: absolute;
     left: 10px;
-    top: 400px;
+    top: 600px;
 
 }
 
@@ -125,4 +125,23 @@ body {
 #c div.block.miss, #p div.block.miss {
     background-color: rgb(28, 28, 30);
 }
+
+/* temporary! */
+#c div.block {
+    color: white;
+}
+
+.connected span img, .ready span img{
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    /* background: red */
+}
+
+/* span img.set {
+    content: url('cute_duck.png');
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+} */
 
