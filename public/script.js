@@ -47,6 +47,26 @@ const ship4 = new Ship('ship4', 4, 0)
 const ship5 = new Ship('ship5', 5, 0)
 const ships = [ship1, ship2, ship3, ship4, ship5]
 
+const side = 10
+function createBoard(color, user) {
+    const board = document.createElement('div')
+    board.classList.add('boards')
+    board.style.backgroundColor = color
+    board.id = user
+    for (let i = 0; i < side * side; i++) {
+        const block = document.createElement('div')
+        block.classList.add('block')
+        block.id = i
+        board.append(block)
+    }
+    gameContainer.append(board)
+}
+
+createBoard('gray', 'p')
+createBoard('green', 'c')
+const cBlocks = document.querySelectorAll('#c div')
+const pBlocks = document.querySelectorAll('#p div')
+
 function startSp() {
     gameMode = 'sp'
     ships.forEach(s => addShipPiece('c', s))
@@ -67,6 +87,8 @@ function startMp() {
                 curPlayer = "enemy"
             }
             console.log(`${playerNum} connected`)
+
+            socket.emit('check-players')
         }
     })
     socket.on('pCon', num => {
@@ -79,24 +101,34 @@ function startMp() {
         if (ready) playMp(socket)
     })
 
+    socket.on('check-players', players => {
+        players.forEach((e, i) => {
+            if (e.connected) joinLeave(i)
+            if (e.ready) {
+                pReady(i)
+                if (i !== playerNum) enemyReady = true
+            }
+        })
+    })
+
     startButton.addEventListener('click', () => {
         if(allShipsPlaced) playMp(socket)
         else infoDisplay.innerHTML = 'Please place your ships.'
     })
+    
 
-    let isJoin = true
+    // let isJoin = true
     function joinLeave(num) {
         let pNum = Number(num)+1
-        if (isJoin) {
-            document.getElementById(`con${pNum}`).src = 'imgs/cute_duck.png'
-        }
-        else {
-            documentgetElementById(`con${pNum}`).src = 'imgs/crying_chick.png'
-        }
+        console.log('changing con')
+        document.getElementById(`con${pNum}`).classList.toggle('juice')
+        document.getElementById(`p${pNum}-con`).style.fontWeight = 'bold'
         if(Number(num) === playerNum) {
-            document.querySelector(player).style.fontWeight = 'bold'
+            // console.log(`.p${playerNum}`)
+            // console.log(`.p${playerNum + 1}-tag`)
+            document.querySelector(`#p${playerNum+1}-tag`).style.fontWeight = 'bold'
         }
-        isJoin = !isJoin
+        // isJoin = !isJoin
     }
 }
 
@@ -134,24 +166,6 @@ function rotat_all() {
     }
 }
 
-const side = 10
-function createBoard(color, user) {
-    const board = document.createElement('div')
-    board.classList.add('boards')
-    board.style.backgroundColor = color
-    board.id = user
-    for (let i = 0; i < side * side; i++) {
-        const block = document.createElement('div')
-        block.classList.add('block')
-        block.id = i
-        board.append(block)
-    }
-    gameContainer.append(board)
-}
-
-createBoard('gray', 'p')
-createBoard('green', 'c')
-const pBlocks = document.querySelectorAll('#p div')
 
 let notDropped
 
@@ -225,12 +239,12 @@ function addShipPiece(user, ship, startId) {
 
     // const pBlocks = document.querySelectorAll('#p div')
     //user === 'p' ? console.log('p') : console.log('c')
-    const cBlocks = document.querySelectorAll(`#${user} div`)
+    const uBlocks = document.querySelectorAll(`#${user} div`)
     let randomBool = Math.random() < 0.5
     let isHorizontal = user === 'p' ? ship.getAng === 0 : randomBool
     // let rsi = Math.floor(Math.random() * side * side)
 
-    const { shipBlocks, valid, notTaken } = getValidity(cBlocks, isHorizontal, startId, ship)
+    const { shipBlocks, valid, notTaken } = getValidity(uBlocks, isHorizontal, startId, ship)
 
     if (valid && notTaken) {
         shipBlocks.forEach(s => {
@@ -281,6 +295,7 @@ function dropShip(e) {
         curr_ship.setAttribute('draggable', false)
         curr_ship.remove()
     }
+    if (!shipContainer.querySelector('.ship')) allShipsPlaced = true
 }
 
 var pushBack = 0
@@ -353,19 +368,25 @@ function playMp(socket) {
         ready = true
         pReady(playerNum)
     }
+
+    if (enemyReady) {
+        if (curPlayer === 'user') {
+            turnDisplay.innerHTML = 'Your turn'
+        }
+        if (curPlayer === 'enemy') {
+            turnDisplay.innerHTML = 'Opponent\'s turn'
+        }
+    }
     
 }
 
 let isReady = true
 function pReady(num) {
+    console.log('changing red')
     let pNum = Number(num) + 1
-    if (isReady) {
-        document.getElementsById(`red${pNum}`).src = 'imgs/cute_duck.png'
-    }
-    else {
-        document.getElementById(`red${pNum}`).src = 'imgs/crying_chick.png'
-    }
-    isReady = !isReady
+    document.getElementById(`red${pNum}`).classList.toggle('juice')
+    document.getElementById(`p${pNum}-red`).style.fontWeight = 'bold'
+    // isReady = !isReady
 }
 
 
