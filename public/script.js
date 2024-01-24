@@ -153,31 +153,10 @@ createBoard('gray', 'p')
 createBoard('green', 'c')
 const pBlocks = document.querySelectorAll('#p div')
 
-const blocks = document.querySelectorAll('#c div')
-let cArr = []
-let shipSizes = [2, 3, 3, 4, 5]
-for (let i=0; i<100; i++) {
-    cArr.push(false)
-}
-
-// Experimental AI code!
-blocks.forEach(e => (e.innerHTML = 0))
-blocks.forEach((e, i) => {
-    console.log({e, i})
-    let arr = getValidity(blocks, true, i, ship1)
-    console.log(arr)
-    console.log(e.innerHTML)
-    console.log(arr.shipBlocks)
-    if (arr.valid && arr.notTaken) {
-        arr.shipBlocks.forEach(e => {
-            e.innerHTML++
-        })
-    }
-})
-
 let notDropped
 
 function getValidity(blocks, isHorizontal, startId, ship) {
+    let falsy = false
     console.log('blocks: ' + blocks)
     console.log('isHorizontal: ' + isHorizontal)
     console.log('startId: ' + startId)
@@ -204,10 +183,16 @@ function getValidity(blocks, isHorizontal, startId, ship) {
         for (let i = 0; i < ship.length; i++) {
             if (isHorizontal) {
                 pushH = Number(pushH)
+                if (i+(pushH) >= 100) {
+                    return {shipBlocks, falsy, falsy}
+                }
                 shipBlocks.push(blocks[i + (pushH)])
                 // console.log(blocks[i + (pushH)])
 
             } else {
+                if (i *side + pushV >= 100) {
+                    return { shipBlocks, falsy, falsy }
+                }
                 pushV = Number(pushV)
                 shipBlocks.push(blocks[i * side + pushV])
                 console.log(blocks[i * side + pushV])
@@ -349,6 +334,44 @@ function returnShip(e) {
     }
 }
 
+
+const blocks = document.querySelectorAll('#c div')
+let cArr = []
+let shipSizes = [2, 3, 3, 4, 5]
+for (let i = 0; i < 100; i++) {
+    cArr.push(false)
+}
+
+let bool = true
+console.log(ships)
+// Experimental AI code!
+blocks.forEach(e => (e.innerHTML = 0))
+for (let idx = 0; idx < 5; idx++) {
+    blocks.forEach((e, i) => {
+        console.log({ e, i })
+        let arr = getValidity(blocks, bool, i, ships[idx])
+        console.log(arr)
+        if (arr.valid && arr.notTaken) {
+            arr.shipBlocks.forEach(e => {
+                e.innerHTML++
+            })
+        }
+        console.log('going on ' + (i + 1))
+    })
+}
+
+bool = !bool
+for (let idx = 0; idx < 5; idx++) {
+    blocks.forEach((e, i) => {
+        console.log({ e, i })
+        let arr = getValidity(blocks, bool, i, ships[idx])
+        if (arr.valid && arr.notTaken) {
+            arr.shipBlocks.forEach(e => {
+                e.innerHTML++
+            })
+        }
+    })
+}
 
 let playerTurn
 
