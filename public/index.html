@@ -8,21 +8,35 @@
     <link rel="stylesheet" href="style.css">
     <script src="/socket.io/socket.io.js"></script>
     <script defer src="script.js"></script>
+    <script defer src="login.js"></script>
 </head>
 
 <body>
+    <section id="box">
+        <div class="form">
+            <h2>Login</h2>
+            <form action="" method="POST">
+                <input type="email" name="username" class="input-field" placeholder="Email">
+                <input type="password" name="password" class="input-field" placeholder="Password">
+                <input type="button" value="LOGIN" class="btn">
+            </form>
+        </div>
+    </section>
     <button id="spButton">Singleplayer</button>
     <button id="mpButton">Multiplayer</button>
-
     <div class="p p1">
         <div id="p1-tag">Player 1</div>
-        <div class="connected"> <span id="p1-con">Connected </span> <span><img id="con1" class="" src="imgs/crying_chick.png"></span></div>
-        <div class="ready"> <span id="p1-red">Ready </span> <span><img id="red1" class="" src="imgs/crying_chick.png"></span></div>
+        <div class="connected"> <span id="p1-con">Connected </span> <span><img id="con1" class=""
+                    src="imgs/crying_chick.png"></span></div>
+        <div class="ready"> <span id="p1-red">Ready </span> <span><img id="red1" class=""
+                    src="imgs/crying_chick.png"></span></div>
     </div>
     <div class="p p2">
         <div id="p2-tag">Player 2</div>
-        <div class="connected"> <span id="p2-con">Connected </span> <span><img id="con2" class="" src="imgs/crying_chick.png"></span></div>
-        <div class="ready"> <span id="p2-red">Ready </span> <span><img id="red2" class="" src="imgs/crying_chick.png"></span></div>
+        <div class="connected"> <span id="p2-con">Connected </span> <span><img id="con2" class=""
+                    src="imgs/crying_chick.png"></span></div>
+        <div class="ready"> <span id="p2-red">Ready </span> <span><img id="red2" class=""
+                    src="imgs/crying_chick.png"></span></div>
     </div>
 
     <!-- gameboards -->

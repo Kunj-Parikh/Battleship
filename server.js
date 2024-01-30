@@ -49,4 +49,14 @@ io.on('connection', socket => {
         socket.emit('check-players', players)
     })
 
+    socket.on('fire', id => {
+        console.log(`Shot fired from ${playerIndex} onto ${id}`)
+        socket.broadcast.emit('fire', id)
+    })
+
+    socket.on('fire-reply', s => {
+        console.log(`fire-replying ${s}`)
+        socket.broadcast.emit('fire-reply', s)
+    })
+
 })
