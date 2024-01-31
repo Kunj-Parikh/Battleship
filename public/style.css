@@ -1,19 +1,61 @@
-.boards {
-    width: 200px;
-    height: 200px;
-    border: black 1px;
-    display: flex;
-    flex-wrap: wrap;
-
-}
-
-.block {
-    width: 20px;
-    height: 20px;
-    border: solid 1px black;
+* {
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
 }
 
+
+.taken, .ship{
+    background-color: rgb(101, 101, 101);
+}
+
+.boards {
+    margin: 2vmin;
+    display: grid;
+    background-color: hsl(36, 9%, 34%);
+    grid-template-rows: repeat(10, 4.6vmin);
+    grid-template-columns: repeat(10, 4.6vmin);
+  }
+
+
+#actualGame {
+    display:flex;
+    margin: 5vh 5vw 5vh 5vw;
+    /* border: 1px solid black; */
+    flex-flow: row wrap;
+    justify-content: space-between;
+}
+
+#not-boards {
+    display: flex;
+    flex-direction: column;
+    width: 40vmin;
+}
+
+/*
+#game-info {
+    display:flex;
+    text-align: left;
+    justify-content: flex-start;
+    flex-direction: column;
+    width: 40vmin;
+    height: 15vmin;
+    background-color: rgb(163, 163, 163);
+    padding: .5rem 1rem;
+    border-radius: 1rem;
+
+}
+*/
+
+.boards div {
+    border: 1px solid rgb(198, 198, 198);
+    
+}
+
+.ship > div {
+    width: 4.6vmin;
+    height: 4.6vmin;
+}
 
 #game-container {
     width: 500px;
@@ -22,13 +64,104 @@
 }
 
 body {
-    text-align: center;
+    margin: 0;
+    background-color: #2c2c2c;
+    overflow-x:hidden;
 }
 
+*, *::before, *::after {
+    font-family: 'Montserrat', sans-serif;
+    box-sizing: border-box;
+  }
+
+.heading {
+    font-family: "Alfa Slab One", serif;
+    color: #fff;
+    font-weight: 100;
+}
+
+.notBox{
+    color:aliceblue
+
+}
+
+.splash-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 66vh;
+}
+
+.splash-title {
+    font-family: 'Bangers', cursive;
+    font-size: 10rem;
+    text-align: center;
+    -webkit-animation: glow 1s ease-in-out infinite alternate;
+    -moz-animation: glow 1s ease-in-out infinite alternate;
+    animation: glow 1s ease-in-out infinite alternate;
+
+}
+
+@-webkit-keyframes glow {
+    from {
+      text-shadow: 0 0 10px #fff, 0 0 20px #fff
+    }
+    to {
+      text-shadow: 0 0 20px #fff, 0 0 30px #ffffff
+    }
+}
+  
+
+.splash-battleship-image {
+    position: absolute;
+    bottom: 5vh;
+    left: 20vw;
+    width: 100%;
+    transform: rotateY(180deg);
+    pointer-events: none;
+    opacity: .25;
+    
+}
+
+
+.splash-btn {
+    font-size: 2rem;
+    margin-left: 2rem;
+}
+
+.btn{
+    background-color: hsl(103, 35%, 51%);
+    padding: .5rem 1rem;
+    outline: none;
+    border: none;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 600;
+    border-radius: 2rem;
+    color: #ffffff;
+}
+
+.btn:hover, .btn:focus {
+    
+    background-color: hsl(104, 41%, 79%);
+}
+
+.splash-btn {
+    font-size: 2rem;
+    margin-left: 2rem;
+}
+
+.splash-btn:first-child {
+    margin-left: 0;
+}
+
+
 .ship-container {
-    width: 500px;
-    height: 50px;
-    background-color: yellow;
+    width: 40vmin;
+    height: 15vmin;
+    background-color: hsl(103, 35%, 51%);
+    border: 2rem;
     align-items: center;
     display: flex;
 }
@@ -39,19 +172,12 @@ body {
     margin: 3px;
 }
 
-.ship1 {
-    background-color: maroon;
-}
-
 .ship2-preview {
     width: 30px;
     height: 10px;
     margin: 3px;
 }
 
-.ship2 {
-    background-color: orange;
-}
 
 .ship3-preview {
     width: 30px;
@@ -59,9 +185,6 @@ body {
     margin: 3px;
 }
 
-.ship3 {
-    background-color: violet;
-}
 
 .ship4-preview {
     width: 40px;
@@ -69,18 +192,10 @@ body {
     margin: 3px;
 }
 
-.ship4 {
-    background-color: blue;
-}
-
 .ship5-preview {
     width: 50px;
     height: 10px;
     margin: 3px;
-}
-
-.ship5 {
-    background-color: purple;
 }
 
 .ship {
@@ -91,6 +206,14 @@ body {
     background-color: green !important;
 } */
 
+#button-container {
+    display:flex;
+    justify-content: space-around;
+    margin-top: 4vh;
+    margin-bottom: 1vh;
+    width: 40vmin;
+    flex-wrap:wrap;
+}
 #rotate-button {
     position: absolute;
     left: 10px;
@@ -98,11 +221,11 @@ body {
 
 }
 
-#start-button {
-    position: absolute;
-    top: 400px;
-    left: 48.5%;
-
+#game-info p {
+    color: #fff;
+    margin:0;
+    padding:0;
+    
 }
 
 #info {
@@ -115,7 +238,7 @@ body {
 #c .ship3,
 #c .ship4,
 #c .ship5 {
-    background-color: green;
+    background-color: rgba(0, 128, 0, 0);
 }
 
 #c div.block.shot, #p div.block.shot {
@@ -124,5 +247,19 @@ body {
 
 #c div.block.miss, #p div.block.miss {
     background-color: rgb(28, 28, 30);
+}
+
+.connected span img, .ready span img{
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    /* background: red */
+}
+
+span img.juice {
+    content: url('imgs/cute_duck.png');
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
 }
 

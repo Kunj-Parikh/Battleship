@@ -4,9 +4,19 @@ const rotateButton = document.querySelector('#rotate-button')
 const startButton = document.querySelector('#start-button')
 const infoDisplay = document.querySelector('#info')
 const turnDisplay = document.querySelector('#turn-display')
-let shipArr = Array.from(shipContainer.children)
+const computerGrid = document.querySelector('.grid-computer')
+const userGrid = document.querySelector('.grid-user')
 
-const socket = io()
+let shipArr = Array.from(shipContainer.children)
+let curPlayer = 'user'
+let playerNum = 0
+let ready = false
+let enemyReady = false
+let allShipsPlaced = false
+let shotFired = -1
+let gameOver = false
+let started = false
+
 
 class Ship {
     constructor(name, length, angle) {
@@ -32,6 +42,102 @@ const ship3 = new Ship('ship3', 3, 0)
 const ship4 = new Ship('ship4', 3, 0)
 const ship5 = new Ship('ship5', 4, 0)
 const ships = [ship1, ship2, ship3, ship4, ship5]
+
+
+const side = 10
+function createBoard(color, user) {
+    const board = document.createElement('div')
+    board.classList.add('boards')
+    board.style.backgroundColor = color
+    board.id = user
+    for (let i = 0; i < side * side; i++) {
+        const block = document.createElement('div')
+        block.classList.add('block')
+        block.id = i
+        board.append(block)
+    }
+    gameContainer.append(board)
+}
+
+createBoard('#21232e', 'p')
+createBoard('#21232e', 'c')
+const cBlocks = document.querySelectorAll('#c div')
+const pBlocks = document.querySelectorAll('#p div')
+
+
+
+function startSp() {
+    
+    
+    ships.forEach(s => addShipPiece('c', s))
+
+    startButton.addEventListener('click', playSp)
+}
+
+function startMp() {
+    started = true
+    const socket = io()
+    socket.on('pNum', num => {
+        if (num === -1) {
+            infoDisplay.innerHTML = 'Full! For now'
+        } else {
+            playerNum = Number(num)
+            if (playerNum === 1) {
+                curPlayer = "enemy"
+            }
+            console.log(`${playerNum} connected`)
+
+            socket.emit('check-players')
+        }
+    })
+    socket.on('pCon', num => {
+        console.log(`Player ${num} has joined/left :D`)
+        joinLeave(num)
+    })
+    socket.on('eReady', num => {
+        enemyReady = true
+        pReady(num)
+        if (ready) playMp(socket)
+    })
+
+    socket.on('check-players', players => {
+        players.forEach((e, i) => {
+            if (e.connected) joinLeave(i)
+            if (e.ready) {
+                pReady(i)
+                if (i !== playerNum) enemyReady = true
+            }
+        })
+    })
+
+    startButton.addEventListener('click', () => {
+        if(allShipsPlaced) playMp(socket)
+        else infoDisplay.innerHTML = 'Please place your ships.'
+    })
+    
+
+    // let isJoin = true
+    function joinLeave(num) {
+        let pNum = Number(num)+1
+        console.log('changing con')
+        document.getElementById(`con${pNum}`).classList.toggle('juice')
+        document.getElementById(`p${pNum}-con`).style.fontWeight = 'bold'
+        if(Number(num) === playerNum) {
+            // console.log(`.p${playerNum}`)
+            // console.log(`.p${playerNum + 1}-tag`)
+            document.querySelector(`#p${playerNum+1}-tag`).style.fontWeight = 'bold'
+        }
+        // isJoin = !isJoin
+    }
+}
+
+
+if(gameMode === 'sp'){
+    startSp()
+} else {
+    startMp()
+}
+
 
 rotateButton.addEventListener('click', rotat_all)
 shipArr[0].addEventListener('click', () => {
@@ -137,7 +243,7 @@ function getValidity(cBlocks, isHorizontal, startId, ship) {
             valid = shipBlocks[0].id < 90 + (side * i + 1))
     }
 
-    const notTaken = shipBlocks.every(s => !s.classList.contains('taken<3'))
+    const notTaken = shipBlocks.every(s => (!s.classList.contains('taken') && !s.classList.contains('miss')))
 
     return { shipBlocks, valid, notTaken }
 }
@@ -160,7 +266,7 @@ function addShipPiece(user, ship, startId) {
     if (valid && notTaken) {
         shipBlocks.forEach(s => {
             s.classList.add(ship.name)
-            s.classList.add('taken<3')
+            s.classList.add('taken')
 
         })
     }
@@ -212,46 +318,48 @@ function dropShip(e) {
 
 var pushBack = 0
 function returnShip(e) {
-    console.log(e.target.classList)
-    if (e.target.classList.contains("taken<3")) {
-        let shipName = e.target.classList[1]
-        // -- let shipPreview = e.target.c
-        //e.target.classList.remove(shipName)
-        pBlocks.forEach((b) => {
-            if (b.classList.contains(shipName)) {
-                b.classList.remove(shipName, "taken<3")
-            }
-        })
-
-        let shipNum = shipName.substring(4, 5)
-        const newShip = document.createElement('div')
-        newShip.id = shipNum - 1
-        newShip.classList.add(`${shipName}-preview`)
-        newShip.classList.add(`${shipName}`)
-        newShip.classList.add('ship')
-        newShip.draggable = true
-        shipContainer.appendChild(newShip)
-        shipArr = Array.from(shipContainer.children)
-        shipArrCopy = Array.from(shipContainer.children)
-
-        ships[newShip.id].setAng = 0
-
-        // Check for buggy code below(probably fixed but maybe some bug still remains???)
-        for (let i=0; i<shipArr.length; i++) {
-            let new_elm = shipArr[i].cloneNode(true)
-            shipArr[i].parentNode.replaceChild(new_elm, shipArr[i])
-            new_elm.addEventListener('click', () => {
-                ships[new_elm.id].setAng = ships[new_elm.id].getAng === 0 ? 90 : 0
-                new_elm.style.transform = `rotate(${ships[new_elm.id].getAng}deg)`
+    if(!started){
+        console.log(e.target.classList)
+        if (e.target.classList.contains("taken")) {
+            let shipName = e.target.classList[1]
+            // -- let shipPreview = e.target.c
+            //e.target.classList.remove(shipName)
+            pBlocks.forEach((b) => {
+                if (b.classList.contains(shipName)) {
+                    b.classList.remove(shipName, "taken")
+                }
             })
-            shipArr[i] = new_elm
-            shipArrCopy[i] = new_elm
+    
+            let shipNum = shipName.substring(4, 5)
+            const newShip = document.createElement('div')
+            newShip.id = shipNum - 1
+            newShip.classList.add(`${shipName}-preview`)
+            newShip.classList.add(`${shipName}`)
+            newShip.classList.add('ship')
+            newShip.draggable = true
+            shipContainer.appendChild(newShip)
+            shipArr = Array.from(shipContainer.children)
+            shipArrCopy = Array.from(shipContainer.children)
+    
+            ships[newShip.id].setAng = 0
+    
+            // Check for buggy code below(probably fixed but maybe some bug still remains???)
+            for (let i=0; i<shipArr.length; i++) {
+                let new_elm = shipArr[i].cloneNode(true)
+                shipArr[i].parentNode.replaceChild(new_elm, shipArr[i])
+                new_elm.addEventListener('click', () => {
+                    ships[new_elm.id].setAng = ships[new_elm.id].getAng === 0 ? 90 : 0
+                    new_elm.style.transform = `rotate(${ships[new_elm.id].getAng}deg)`
+                })
+                shipArr[i] = new_elm
+                shipArrCopy[i] = new_elm
+            }
+    
+            shipArrCopy.forEach(s => s.addEventListener('dragstart', testDragged))
         }
-
-        shipArrCopy.forEach(s => s.addEventListener('dragstart', testDragged))
     }
+    
 }
-
 
 let gameOver = false
 let playerTurn
@@ -262,8 +370,20 @@ function startGame() {
         allBoardBlocks.forEach(b => b.addEventListener('click', handleClick))
         
         if (shipContainer.children.length !== 0) {
+            
             infoDisplay.textContent = 'Please place your ships.'
         } else {
+            started = true
+            const shipc = document.getElementById("pos");
+            shipc.remove();
+            const rotate = document.getElementById("rotate-button");
+            rotate.remove();
+            const start = document.getElementById("start-button");
+            start.remove();
+            const info1 = document.getElementById("info-box1");
+            info1.remove();
+            const info2 = document.getElementById("info-box2");
+            info2.remove();
             const allBoardBlocks = document.querySelectorAll('#c div')
             allBoardBlocks.forEach(b => b.addEventListener('click', handleClick))
             playerTurn = true
@@ -272,7 +392,34 @@ function startGame() {
         }
         
     }
+}
+
+function playMp(socket) {
+    if (gameOver) return
+    if (!ready) {
+        socket.emit('pReady')
+        ready = true
+        pReady(playerNum)
+    }
+
+    if (enemyReady) {
+        if (curPlayer === 'user') {
+            turnDisplay.innerHTML = 'Your turn'
+        }
+        if (curPlayer === 'enemy') {
+            turnDisplay.innerHTML = 'Opponent\'s turn'
+        }
+    }
     
+}
+
+let isReady = true
+function pReady(num) {
+    console.log('changing red')
+    let pNum = Number(num) + 1
+    document.getElementById(`red${pNum}`).classList.toggle('juice')
+    document.getElementById(`p${pNum}-red`).style.fontWeight = 'bold'
+    // isReady = !isReady
 }
 
 
@@ -287,20 +434,20 @@ let css = []
 function handleClick(e) {
     if (!gameOver) {
         if(pTotal.includes(e.target.id)) {
-            infoDisplay.textContent = 'You have already shot there. Try again.'
+            infoDisplay.textContent = ' You have already shot there. Try again.'
             return
-        } else if (e.target.classList.contains('taken<3')) {
+        } else if (e.target.classList.contains('taken')) {
             e.target.classList.add("shot")
             
-            infoDisplay.textContent = `Computer ship has been shot, at position (${e.target.id % 10 + 1}, ${Math.floor(e.target.id/10) + 1})`
+            infoDisplay.textContent = ` Computer ship has been shot, at position (${e.target.id % 10 + 1}, ${Math.floor(e.target.id/10) + 1})`
             let classes = Array.from(e.target.classList)
             classes = classes.filter(n => n !== 'block')
             classes = classes.filter(n => n !== 'shot')
-            classes = classes.filter(n => n !== 'taken<3')
+            classes = classes.filter(n => n !== 'taken')
             pHits.push(...classes)
             checkScore('p', pHits, pss)
         } else {
-            infoDisplay.textContent = 'You missed!'
+            infoDisplay.textContent = ' You missed!'
             e.target.classList.add('miss')
         }
         pTotal.push(e.target.id)
@@ -323,18 +470,22 @@ function computerGo() {
                 randomGo = Math.floor(Math.random()*side*side)
             }
             cTotal.push(randomGo)
-            //console.log(cTotal)
-            const pBlocks = document.querySelectorAll('#p div')
-            if (pBlocks[randomGo].classList.contains('taken<3') && pBlocks[randomGo].classList.contains('shot')) {
+
+
+            // END
+
+            
+            //const pBlocks = document.querySelectorAll('#p div')
+            if (pBlocks[randomGo].classList.contains('taken') && pBlocks[randomGo].classList.contains('shot')) {
                 computerGo()
                 return
-            } else if (pBlocks[randomGo].classList.contains('taken<3') && !pBlocks[randomGo].classList.contains('shot')) {
+            } else if (pBlocks[randomGo].classList.contains('taken') && !pBlocks[randomGo].classList.contains('shot')) {
                 pBlocks[randomGo].classList.add('shot')
                 infoDisplay.textContent= `Computer shot your ship at position ${pBlocks[randomGo].id}`
                 let classes = Array.from(pBlocks[randomGo].classList)
                 classes = classes.filter(n => n !== 'block')
                 classes = classes.filter(n => n !== 'shot')
-                classes = classes.filter(n => n !== 'taken<3')
+                classes = classes.filter(n => n !== 'taken')
                 cHits.push(...classes)
                 checkScore('c', cHits, css)
             } else {
@@ -350,7 +501,55 @@ function computerGo() {
             const cBlocks = document.querySelectorAll('#c div')
             cBlocks.forEach(b => b.addEventListener('click', handleClick))
         }, 2000)
-    }    
+    }
+    
+    if (!gameOver) {
+        turnDisplay.textContent = " Computer's turn"
+        infoDisplay.textContent = ' Computer thinking...'
+        setTimeout(() => {
+            let randomGo = Math.floor(Math.random() * side * side)
+            // Reload randomGo until it is not in cTotal
+            while (cTotal.includes(randomGo)) {
+                randomGo = Math.floor(Math.random() * side * side)
+            }
+            cTotal.push(randomGo)
+            //console.log(cTotal)
+            const pBlocks = document.querySelectorAll('#p div')
+            if (pBlocks[randomGo].classList.contains('taken') && pBlocks[randomGo].classList.contains('shot')) {
+                computerGo()
+                return
+            } else if (pBlocks[randomGo].classList.contains('taken') && !pBlocks[randomGo].classList.contains('shot')) {
+                pBlocks[randomGo].classList.add('shot')
+                infoDisplay.textContent = ` Computer shot your ship at position (${pBlocks[randomGo].id % 10 + 1}, ${Math.floor(pBlocks[randomGo].id/10) + 1})`
+                
+                let classes = Array.from(pBlocks[randomGo].classList)
+                classes = classes.filter(n => n !== 'block')
+                classes = classes.filter(n => n !== 'shot')
+                classes = classes.filter(n => n !== 'taken')
+                cHits.push(...classes)
+                checkScore('c', cHits, css)
+            } else {
+                infoDisplay.textContent = ` Computer missed at position (${pBlocks[randomGo].id % 10 + 1}, ${Math.floor(pBlocks[randomGo].id/10) + 1})`
+                pBlocks[randomGo].classList.add('miss')
+            }
+        }, 1000)
+
+        setTimeout(() => {
+            playerTurn = true
+            turnDisplay.textContent = 'Your turn'
+            infoDisplay.textContent = 'Please take your turn'
+            const cBlocks = document.querySelectorAll('#c div')
+            cBlocks.forEach(b => b.addEventListener('click', handleClick))
+        }, 2000)
+    } 
+}
+
+function createPmap(missHitBoard) {
+    for(let i = 0; i < 10; i++) {
+        for(let j = 0; j < 10; j++) {
+            currentBlock = missHitBoard[i][j];
+        }
+    }
 }
 
 function checkScore(usr, usr_hits, usr_ss) {
