@@ -1,3 +1,0 @@
-Battleship
-
-A battleship game
