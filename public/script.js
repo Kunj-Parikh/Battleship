@@ -74,10 +74,11 @@ function startSp() {
     startButton.addEventListener('click', playSp)
 }
 
+let socket
 function startMp() {
-    gameMode = 'mp'
+    socket = io()
 
-    const socket = io()
+    gameMode = 'mp'
     socket.on('pNum', num => {
         if (num === -1) {
             infoDisplay.innerHTML = 'Full! For now'
@@ -86,13 +87,13 @@ function startMp() {
             if (playerNum === 1) {
                 curPlayer = "enemy"
             }
-            console.log(`${playerNum} connected`)
+            // console.log(`${playerNum} connected`)
 
             socket.emit('check-players')
         }
     })
     socket.on('pCon', num => {
-        console.log(`Player ${num} has joined/left :D`)
+        // console.log(`Player ${num} has joined/left :D`)
         joinLeave(num)
     })
     socket.on('eReady', num => {
@@ -117,23 +118,21 @@ function startMp() {
     })
 
     cBlocks.forEach(s => {
-        s.addEventListener('click', () => {
-            if (curPlayer === 'user' && ready && enemyReady) {
-                shotFired = s.id // shotFired = s.dataset.id
-                socket.emit('fire', shotFired)
-            }
-        })
+        s.addEventListener('click', handleClick)
     })
 
     socket.on('fire', id => {
         enemyGo(id)
+        shotFired = id;
         const s = pBlocks[id]
         socket.emit('fire-reply', s.classList)
+        console.log(`client hear fire: id: ${id}`)
         playMp(socket)
     })
 
     socket.on('fire-reply', cl => {
-        handleClick(cl)
+        console.log(`client hear fire-reply: cl: ${cl}`)
+        revealSquare(shotFired, cl)
         playMp(socket)
     })
 
@@ -403,7 +402,7 @@ function playMp(socket) {
 
 let isReady = true
 function pReady(num) {
-    console.log('changing red')
+    // console.log('changing red')
     let pNum = Number(num) + 1
     document.getElementById(`red${pNum}`).classList.toggle('juice')
     document.getElementById(`p${pNum}-red`).style.fontWeight = 'bold'
@@ -420,23 +419,97 @@ let pss = []
 let css = []
 
 function handleClick(e) {
-    const obj = Object.values(e)
-    if (shotFired !== -1) {
-        var eSq = document.getElementById(`${shotFired}`)
-        console.log(shotFired)
+    let eSq
+    if (gameMode === 'mp') {
+        if (curPlayer === 'user' && ready && enemyReady) {
+            console.log('if condition has activated!')
+            // console.log('e ' + e)
+            shotFired = e.target.id
+            console.log(`client emit fire, shotFired: ${shotFired}`)
+            eSq = document.querySelectorAll('#c div')[shotFired]
+            console.log(`shotFired: ${shotFired}`)
+            socket.emit('fire', shotFired)
+        }
     } else eSq = e
-    console.log('obj: ' + String(obj))
-    console.log('e: ' + e)
-    console.log('eSq: ' + String(eSq))
     if (!gameOver) {
-        if (pTotal.includes(e.target.id)) {
-            infoDisplay.textContent = 'You have already shot there. Try again.'
-            return
-        } else if (e.target.classList.contains('taken<3')) {
-            e.target.classList.add("shot")
+        if (gameMode === 'sp') {
+            if (pTotal.includes(e.target.id)) {
+                infoDisplay.textContent = 'You have already shot there. Try again.'
+                return
+            } else revealSquare(e)
+            pTotal.push(e.target.id)
+            playerTurn = false
+
+            const cBlocks = document.querySelectorAll('#c div')
+            cBlocks.forEach(b => b.replaceWith(b.cloneNode(true)))
+            cBlocks.forEach(s => {
+                s.addEventListener('click', handleClick)
+            })
+
+            setTimeout(enemyGo, 1000)
+        }
+        else if (gameMode === 'mp') {
+            // const socket = io()
+            // socket.emit('fire', eSq.id)
+            if (pTotal.includes(eSq.id)) {
+                infoDisplay.textContent = 'You have already shot there. Try again.'
+                return
+            } else revealSquare(eSq)
+            pTotal.push(eSq.id)
+            playerTurn = false
+
+            const cBlocks = document.querySelectorAll('#c div')
+            cBlocks.forEach(b => b.replaceWith(b.cloneNode(true)))
+            cBlocks.forEach(s => {
+                s.addEventListener('click', handleClick)
+            })
+            // setTimeout(enemyGo, 1000)
+        }
+    }
+}
+
+function revealSquare(e, cl) {
+    // console.log(`preliminary: ${e}`)
+    console.log(`shotFired: ${shotFired}`)
+    var eSq = -1
+    console.log(cl)
+
+    // console.log('eSq: ' + e)
+    // console.log(obj)
+    if (shotFired !== -1) {
+        eSq = document.querySelectorAll('#c div')[shotFired]
+        console.log(`eSq has been defined as: ${eSq}`)
+        console.log('reveal square executed')
+        console.log(shotFired)
+    } else {
+        eSq = e
+        console.log(`eSq has been defined as: ${eSq}`)
+    }
+    if (gameMode === 'sp') {
+        if (eSq.target.classList.contains('taken<3')) {
+            eSq.target.classList.add("shot")
 
             infoDisplay.textContent = `Computer ship has been shot, at position (${e.target.id % 10 + 1}, ${Math.floor(e.target.id / 10) + 1})`
-            let classes = Array.from(e.target.classList)
+            let classes = Array.from(eSq.target.classList)
+            classes = classes.filter(n => n !== 'block')
+            classes = classes.filter(n => n !== 'shot')
+            classes = classes.filter(n => n !== 'taken<3')
+            pHits.push(...classes)
+            console.log(classes)
+            checkScore('p', pHits, pss) 
+        } else {
+            infoDisplay.textContent = 'You missed!'
+            eSq.target.classList.add('miss')
+        }
+
+    }
+    else if (gameMode === 'mp' && (cl !== undefined)) {
+        var obj = Object.values(cl)
+        console.log(eSq)
+        if (obj.includes('taken<3')) {
+            eSq.classList.add("shot")
+            infoDisplay.textContent = `Enemy ship has been shot, at position (${eSq.id % 10 + 1}, ${Math.floor(eSq.id / 10) + 1})`
+            let classes = Array.from(cl)
             classes = classes.filter(n => n !== 'block')
             classes = classes.filter(n => n !== 'shot')
             classes = classes.filter(n => n !== 'taken<3')
@@ -444,26 +517,23 @@ function handleClick(e) {
             checkScore('p', pHits, pss)
         } else {
             infoDisplay.textContent = 'You missed!'
-            e.target.classList.add('miss')
+            eSq.classList.add('miss')
         }
-        pTotal.push(e.target.id)
-        playerTurn = false
-
-        const cBlocks = document.querySelectorAll('#c div')
-        cBlocks.forEach(b => b.replaceWith(b.cloneNode(true)))
-        setTimeout(enemyGo, 1000)
+        curPlayer = 'enemy'
     }
+    
 }
 
 function enemyGo(sq) {
     console.log(sq)
+    console.log(`gameMode: ${gameMode}`)
     if (!gameOver) {
         turnDisplay.textContent = "Computer's turn"
         infoDisplay.textContent = 'Computer thinking...'
         setTimeout(() => {
             if (gameMode === 'sp') {
                 console.log('generate')
-                var sq = Math.floor(Math.random() * side * side)
+                sq = Math.floor(Math.random() * side * side)
             // Reload sq until it is not in cTotal
             while (cTotal.includes(sq)) {
                 console.log('re-generate')
@@ -472,7 +542,8 @@ function enemyGo(sq) {
         }
             cTotal.push(sq)
             const pBlocks = document.querySelectorAll('#p div')
-            if (pBlocks[sq].classList.contains('taken<3') && pBlocks[sq].classList.contains('shot')) {
+            // console.log(`pBlocks: ${pBlocks}. sq: ${sq}`)
+            if (pBlocks[sq].classList.contains('taken<3') && pBlocks[sq].classList.contains('shot')) { // Something here 
                 console.log('retry')
                 enemyGo()
                 return
@@ -487,10 +558,11 @@ function enemyGo(sq) {
                 cHits.push(...classes)
                 checkScore('c', cHits, css)
             } else {
-                console.log('miss')
+                // console.log('miss')
                 infoDisplay.textContent = `Computer missed at position ${pBlocks[sq].id}`
                 pBlocks[sq].classList.add('miss')
             }
+
         }, 1000)
 
         setTimeout(() => {
@@ -500,6 +572,7 @@ function enemyGo(sq) {
             const cBlocks = document.querySelectorAll('#c div')
             cBlocks.forEach(b => b.addEventListener('click', handleClick))
         }, 2000)
+        curPlayer = 'user'
     }
 }
 
@@ -527,75 +600,3 @@ function checkScore(usr, usr_hits, usr_ss) {
         gameOver = true
     }
 }
-
-// function createPmap(missHitBoard) {
-//     for(let i = 0; i < 10; i++) {
-//         for(let j = 0; j < 10; j++) {
-//             currentBlock = missHitBoard[i][j];
-//         }
-//     }
-// }
-
-
-
-
-/* Possible computerGo() code
-if (!gameOver) {
-    turnDisplay.textContent = "Computer's turn"
-    infoDisplay.textContent = 'Computer thinking...'
-    setTimeout(() => {
-
-        
-        // THIS IS THE COMPUTER AI
-        // WORK IN PROGRESS
-        const pBlocks = document.querySelectorAll('#p div')
-        let grid = [...Array(10)].map(e => Array(10));
-        
-        pBlocks.forEach(e => {
-            if(e.classList.length === 1) {
-                let location = e.id
-                let first_id = location % 10
-            }
-        })
-
-        let randomGo = Math.floor(Math.random()*side*side)
-        // Reload randomGo until it is not in cTotal
-        while(cTotal.includes(randomGo)) {
-            randomGo = Math.floor(Math.random()*side*side)
-        }
-        cTotal.push(randomGo)
-
-
-        // END
-
-        
-        //const pBlocks = document.querySelectorAll('#p div')
-        if (pBlocks[randomGo].classList.contains('taken<3') && pBlocks[randomGo].classList.contains('shot')) {
-            computerGo()
-            return
-        } else if (pBlocks[randomGo].classList.contains('taken<3') && !pBlocks[randomGo].classList.contains('shot')) {
-            pBlocks[randomGo].classList.add('shot')
-            infoDisplay.textContent= `Computer shot your ship at position ${pBlocks[randomGo].id}`
-            let classes = Array.from(pBlocks[randomGo].classList)
-            classes = classes.filter(n => n !== 'block')
-            classes = classes.filter(n => n !== 'shot')
-            classes = classes.filter(n => n !== 'taken<3')
-            cHits.push(...classes)
-            checkScore('c', cHits, css)
-        } else {
-            infoDisplay.textContent= `Computer missed at position ${e.target.id % 10 + 1}, ${Math.floor(e.target.id/10) + 1}`
-            pBlocks[randomGo].classList.add('miss')
-        }
-    }, 1000)
-    
-    setTimeout(() => {
-        playerTurn = true
-        turnDisplay.textContent = 'Your turn'
-        infoDisplay.textContent = 'Please take your turn'
-        const cBlocks = document.querySelectorAll('#c div')
-        cBlocks.forEach(b => b.addEventListener('click', handleClick))
-    }, 2000)
-}
-*/
-
-

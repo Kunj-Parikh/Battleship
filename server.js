@@ -11,6 +11,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 server.listen(PORT, () => console.log('Running on port: ' + PORT))
 
+
 const connections = [null, null]
 io.on('connection', socket => {
     let playerIndex = -1
@@ -20,6 +21,7 @@ io.on('connection', socket => {
             break
         }
     }
+    
 
     socket.emit('pNum', playerIndex)
     console.log(`Player ${playerIndex} has connected! :D`)
@@ -50,12 +52,12 @@ io.on('connection', socket => {
     })
 
     socket.on('fire', id => {
-        console.log(`Shot fired from ${playerIndex} onto ${id}`)
+        console.log(`Server hear fire from ${playerIndex} onto ${id}`)
         socket.broadcast.emit('fire', id)
     })
 
     socket.on('fire-reply', s => {
-        console.log(`fire-replying ${s}`)
+        console.log(`Server hear fire-reply: ${s}`)
         socket.broadcast.emit('fire-reply', s)
     })
 
