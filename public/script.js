@@ -18,6 +18,37 @@ let allShipsPlaced = false
 let shotFired = -1
 let gameOver = false
 
+let pShip_1 = 0
+let pShip_2 = 0
+let pShip_3 = 0
+let pShip_4 = 0
+let pShip_5 = 0
+
+let ps1_s = false
+let ps2_s = false
+let ps3_s = false
+let ps4_s = false
+let ps5_s = false
+
+let cShip_1 = 0
+let cShip_2 = 0
+let cShip_3 = 0
+let cShip_4 = 0
+let cShip_5 = 0
+
+let cs1_s = false
+let cs2_s = false
+let cs3_s = false
+let cs4_s = false
+let cs5_s = false
+
+
+
+
+
+
+
+
 spButton.addEventListener('click', startSp)
 mpButton.addEventListener('click', startMp)
 
@@ -122,17 +153,28 @@ function startMp() {
     })
 
     socket.on('fire', id => {
-        enemyGo(id)
+        checkGameOver()
+        // enemyGo(id)
         shotFired = id;
         const s = pBlocks[id]
-        socket.emit('fire-reply', s.classList)
+        if (!s.classList.contains('miss') && !s.classList.contains('shot')){
+            enemyGo(id)
+            socket.emit('fire-reply', s.classList)
+        }
+        else infoDisplay.innerHTML = 'Waiting for opponent...'
         console.log(`client hear fire: id: ${id}`)
         playMp(socket)
     })
 
     socket.on('fire-reply', cl => {
         console.log(`client hear fire-reply: cl: ${cl}`)
-        revealSquare(shotFired, cl)
+        checkGameOver()
+        let o = Object.values(cl)
+        console.log('o is: ' + o)
+        if (!o.includes('miss') && !o.includes('shot')) {
+            revealSquare(shotFired, cl)
+            checkScore('c', cHits, css)
+        } else infoDisplay.innerHTML = 'Waiting for opponent...'
         playMp(socket)
     })
 
@@ -190,10 +232,10 @@ function rotat_all() {
 let notDropped
 
 function getValidity(blocks, isHorizontal, startId, ship) {
-    console.log('blocks: ' + blocks)
-    console.log('isHorizontal: ' + isHorizontal)
-    console.log('startId: ' + startId)
-    console.log('ship: ' + ship)
+    // console.log('blocks: ' + blocks)
+    // console.log('isHorizontal: ' + isHorizontal)
+    // console.log('startId: ' + startId)
+    // console.log('ship: ' + ship)
     if (startId || startId === 0) {
         var pushH = startId
         var pushV = startId
@@ -220,7 +262,7 @@ function getValidity(blocks, isHorizontal, startId, ship) {
             } else {
                 pushV = Number(pushV)
                 shipBlocks.push(blocks[i * side + pushV])
-                console.log(blocks[i * side + pushV])
+                // console.log(blocks[i * side + pushV])
             }
         }
     }
@@ -315,7 +357,7 @@ function dropShip(e) {
         curr_ship.setAttribute('draggable', false)
         curr_ship.remove()
     }
-    if (!shipContainer.querySelector('.ship')) allShipsPlaced = true
+    if (!shipContainer.querySelector('.ship') || (true)) allShipsPlaced = true
 }
 
 var pushBack = 0
@@ -452,6 +494,7 @@ function handleClick(e) {
             // const socket = io()
             // socket.emit('fire', eSq.id)
             if (pTotal.includes(eSq.id)) {
+                console.log('already shot here!!!')
                 infoDisplay.textContent = 'You have already shot there. Try again.'
                 return
             } else revealSquare(eSq)
@@ -469,6 +512,7 @@ function handleClick(e) {
 }
 
 function revealSquare(e, cl) {
+    checkGameOver()
     // console.log(`preliminary: ${e}`)
     console.log(`shotFired: ${shotFired}`)
     var eSq = -1
@@ -514,10 +558,16 @@ function revealSquare(e, cl) {
             classes = classes.filter(n => n !== 'shot')
             classes = classes.filter(n => n !== 'taken<3')
             pHits.push(...classes)
+            if (obj.includes('ship1')) pShip_1++
+            if (obj.includes('ship2')) pShip_2++
+            if (obj.includes('ship3')) pShip_3++
+            if (obj.includes('ship4')) pShip_4++
+            if (obj.includes('ship5')) pShip_5++
             checkScore('p', pHits, pss)
         } else {
             infoDisplay.textContent = 'You missed!'
             eSq.classList.add('miss')
+            checkScore('p', pHits, pss)
         }
         curPlayer = 'enemy'
     }
@@ -525,11 +575,12 @@ function revealSquare(e, cl) {
 }
 
 function enemyGo(sq) {
+    checkGameOver()
     console.log(sq)
     console.log(`gameMode: ${gameMode}`)
     if (!gameOver) {
-        turnDisplay.textContent = "Computer's turn"
-        infoDisplay.textContent = 'Computer thinking...'
+        turnDisplay.textContent = "Opponent's turn"
+        infoDisplay.textContent = 'Opponent thinking...'
         setTimeout(() => {
             if (gameMode === 'sp') {
                 console.log('generate')
@@ -550,16 +601,21 @@ function enemyGo(sq) {
             } else if (pBlocks[sq].classList.contains('taken<3') && !pBlocks[sq].classList.contains('shot')) {
                 console.log('hit')
                 pBlocks[sq].classList.add('shot')
-                infoDisplay.textContent = `Computer shot your ship at position ${pBlocks[sq].id}`
+                infoDisplay.textContent = `Enemy shot your ship at position ${pBlocks[sq].id}`
                 let classes = Array.from(pBlocks[sq].classList)
                 classes = classes.filter(n => n !== 'block')
                 classes = classes.filter(n => n !== 'shot')
                 classes = classes.filter(n => n !== 'taken<3')
                 cHits.push(...classes)
+                if (obj.includes('ship1')) cShip_1++
+                if (obj.includes('ship2')) cShip_2++
+                if (obj.includes('ship3')) cShip_3++
+                if (obj.includes('ship4')) cShip_4++
+                if (obj.includes('ship5')) cShip_5++
                 checkScore('c', cHits, css)
             } else {
                 // console.log('miss')
-                infoDisplay.textContent = `Computer missed at position ${pBlocks[sq].id}`
+                infoDisplay.textContent = `Enemy missed at position ${pBlocks[sq].id}`
                 pBlocks[sq].classList.add('miss')
             }
 
@@ -577,9 +633,23 @@ function enemyGo(sq) {
 }
 
 function checkScore(usr, usr_hits, usr_ss) {
+    console.log('pss:' + pss)
+    console.log('css: ' + css)
+    console.log('pShip_1: ' + pShip_1)
+    console.log('pShip_2: ' + pShip_2)
+    console.log('pShip_3: ' + pShip_3)
+    console.log('pShip_4: ' + pShip_4)
+    console.log('pShip_5: ' + pShip_5)
+
+    console.log('cShip_1: ' + cShip_1)
+    console.log('cShip_2: ' + cShip_2)
+    console.log('cShip_3: ' + cShip_3)
+    console.log('cShip_4: ' + cShip_4)
+    console.log('cShip_5: ' + cShip_5)
+
     function checkShip(sname, length) {
         if (usr_hits.filter(hit => hit === sname).length === length) {
-            infoDisplay.textContent = `${usr} has sunk the opponent's ship named ${sname}!`
+            infoDisplay.textContent = `Your ${sname} has been sunk!`
             if (usr === 'p') {
                 pHits = usr_hits.filter(ship => ship !== sname)
             } else if (usr === 'c') {
@@ -587,16 +657,63 @@ function checkScore(usr, usr_hits, usr_ss) {
             }
             usr_ss.push(sname)
         }
+        else if (pShip_1 == 2 && ps1_s === false) {
+            infoDisplay.innerHTML = 'You sunk the enemy\'s ship1!'
+            ps1_s = true
+        }
+        else if (pShip_2 == 3 && ps2_s === false) {
+            infoDisplay.innerHTML = 'You sunk the enemy\'s ship2!'
+            ps2_s = true
+        }
+        else if (pShip_3 == 3 && ps3_s === false) {
+            infoDisplay.innerHTML = 'You sunk the enemy\'s ship3!'
+            ps3_s = true
+        }
+        else if (pShip_4 == 4 && ps4_s === false) {
+            infoDisplay.innerHTML = 'You sunk the enemy\'s ship4!'
+            ps4_s = true
+        }
+        else if (pShip_5 == 5 && ps5_s === false) {
+            infoDisplay.innerHTML = 'You sunk the enemy\'s ship5!'
+            ps5_s = true
+        }
+
+        else if (cShip_1 == 2 && cs1_s === false) {
+            infoDisplay.innerHTML = 'The enemy sunk your ship1!'
+            cs1_s = true
+        }
+        else if (cShip_2 == 3 && cs2_s === false) {
+            infoDisplay.innerHTML = 'The enemy sunk your ship2!'
+            cs2_s = true
+        }
+        else if (cShip_3 == 3 && cs3_s === false) {
+            infoDisplay.innerHTML = 'The enemy sunk your ship3!'
+            cs3_s = true
+        }
+        else if (cShip_4 == 4 && cs4_s === false) {
+            infoDisplay.innerHTML = 'The enemy sunk your ship4!'
+            cs4_s = true
+        }
+        else if (cShip_5 == 5 && cs5_s === false) {
+            infoDisplay.innerHTML = 'The enemy sunk your ship5!'
+            cs5_s = true
+        }
     }
 
     ships.forEach(s => checkShip(s.name, s.length))
+    checkGameOver()
+}
 
-    if (pss.length === 5) {
-        infoDisplay.textContent = "You won by sinking all of the computer's ships"
+function checkGameOver() {
+    if (pss.length === 5 || (pShip_1 + pShip_2 + pShip_3 + pShip_4 + pShip_5 >= 17) 
+        || (ps1_s && ps2_s && ps3_s && ps4_s && ps5_s)) {
+        infoDisplay.textContent = "You won by sinking all of the enemy's ships"
         gameOver = true
     }
-    if (css.length === 5) {
-        infoDisplay.textContent = 'Computer sunk all your ships. How could you lose to such a trash program.'
+    if (css.length === 5 || (cShip_1 + cShip_2 + cShip_3 + cShip_4 + cShip_5 >= 17) 
+        || (cs1_s && cs2_s && cs3_s && cs4_s && cs5_s)) {
+        infoDisplay.textContent = 'Enemy sunk all your ships. How could you lose to such a trash program.'
         gameOver = true
+        // process.exit(0)
     }
 }
