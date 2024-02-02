@@ -5,11 +5,7 @@ const startButton = document.querySelector('#start-button')
 const infoDisplay = document.querySelector('#info')
 const turnDisplay = document.querySelector('#turn-display')
 
-const spButton = document.querySelector('#spButton')
-const mpButton = document.querySelector('#mpButton')
-
 let shipArr = Array.from(shipContainer.children)
-let gameMode = ''
 let curPlayer = 'user'
 let playerNum = 0
 let ready = false
@@ -17,41 +13,19 @@ let enemyReady = false
 let allShipsPlaced = false
 let shotFired = -1
 let gameOver = false
+let started = false;
 
-let pShip_1 = 0
-let pShip_2 = 0
-let pShip_3 = 0
-let pShip_4 = 0
-let pShip_5 = 0
+let pShip_1, pShip_2, pShip_3, pShip_4, pShip_5 = 0
 
-let ps1_s = false
-let ps2_s = false
-let ps3_s = false
-let ps4_s = false
-let ps5_s = false
+let ps1_s, ps2_s, ps3_s, ps4_s, ps5_s = false
 
-let cShip_1 = 0
-let cShip_2 = 0
-let cShip_3 = 0
-let cShip_4 = 0
-let cShip_5 = 0
+let cShip_1, cShip_2, cShip_3, cShip_4, cShip_5 = 0
 
-let cs1_s = false
-let cs2_s = false
-let cs3_s = false
-let cs4_s = false
-let cs5_s = false
+let cs1_s, cs2_s, cs3_s, cs4_s, cs5_s = false
 
 
 
-
-
-
-
-
-spButton.addEventListener('click', startSp)
-mpButton.addEventListener('click', startMp)
-
+// startButton.addEventListener('click', start)
 
 class Ship {
     constructor(name, length, angle) {
@@ -93,107 +67,118 @@ function createBoard(color, user) {
     gameContainer.append(board)
 }
 
-createBoard('gray', 'p')
-createBoard('green', 'c')
+createBoard('#486aa7', 'p')
+createBoard('#3D6187', 'c')
 const cBlocks = document.querySelectorAll('#c div')
 const pBlocks = document.querySelectorAll('#p div')
 
-function startSp() {
-    gameMode = 'sp'
-    ships.forEach(s => addShipPiece('c', s))
 
-    startButton.addEventListener('click', playSp)
-}
+
+// function startSp() {
+//   gameMode = "sp";
+//   ships.forEach((s) => addShipPiece("c", s));
+
+//   startButton.addEventListener("click", playSp);
+// }
 
 let socket
-function startMp() {
-    socket = io()
+function start() {
 
-    gameMode = 'mp'
-    socket.on('pNum', num => {
-        if (num === -1) {
-            infoDisplay.innerHTML = 'Full! For now'
-        } else {
-            playerNum = Number(num)
-            if (playerNum === 1) {
-                curPlayer = "enemy"
-            }
-            // console.log(`${playerNum} connected`)
-
-            socket.emit('check-players')
-        }
-    })
-    socket.on('pCon', num => {
-        // console.log(`Player ${num} has joined/left :D`)
-        joinLeave(num)
-    })
-    socket.on('eReady', num => {
-        enemyReady = true
-        pReady(num)
-        if (ready) playMp(socket)
-    })
-
-    socket.on('check-players', players => {
-        players.forEach((e, i) => {
-            if (e.connected) joinLeave(i)
-            if (e.ready) {
-                pReady(i)
-                if (i !== playerNum) enemyReady = true
+    if(gameMode == 'sp'){
+        ships.forEach(s => addShipPiece('c', s))
+        playSp()
+    } else {
+        socket = io()
+        socket.on('pNum', num => {
+            if (num === -1) {
+                infoDisplay.innerHTML = 'Full! For now'
+            } else {
+                playerNum = Number(num)
+                if (playerNum === 1) {
+                    curPlayer = "enemy"
+                }
+                // console.log(`${playerNum} connected`)
+    
+                socket.emit('check-players')
             }
         })
-    })
-
-    startButton.addEventListener('click', () => {
-        if (allShipsPlaced) playMp(socket)
-        else infoDisplay.innerHTML = 'Please place your ships.'
-    })
-
-    cBlocks.forEach(s => {
-        s.addEventListener('click', handleClick)
-    })
-
-    socket.on('fire', id => {
-        checkGameOver()
-        // enemyGo(id)
-        shotFired = id;
-        const s = pBlocks[id]
-        if (!s.classList.contains('miss') && !s.classList.contains('shot')){
-            enemyGo(id)
-            socket.emit('fire-reply', s.classList)
+        socket.on('pCon', num => {
+            // console.log(`Player ${num} has joined/left :D`)
+            joinLeave(num)
+        })
+        socket.on('eReady', num => {
+            enemyReady = true
+            pReady(num)
+            if (ready) playMp(socket)
+        })
+    
+        socket.on('check-players', players => {
+            players.forEach((e, i) => {
+                if (e.connected) joinLeave(i)
+                if (e.ready) {
+                    pReady(i)
+                    if (i !== playerNum) enemyReady = true
+                }
+            })
+        })
+    
+        startButton.addEventListener('click', () => {
+            if (allShipsPlaced) playMp(socket)
+            else infoDisplay.innerHTML = 'Please place your ships.'
+        })
+    
+        cBlocks.forEach(s => {
+            s.addEventListener('click', handleClick)
+        })
+    
+        socket.on('fire', id => {
+            checkGameOver()
+            // enemyGo(id)
+            shotFired = id;
+            const s = pBlocks[id]
+            if (!s.classList.contains('miss') && !s.classList.contains('shot')){
+                enemyGo(id)
+                socket.emit('fire-reply', s.classList)
+            }
+            else infoDisplay.innerHTML = 'Waiting for opponent...'
+            console.log(`client hear fire: id: ${id}`)
+            playMp(socket)
+        })
+    
+        socket.on('fire-reply', cl => {
+            console.log(`client hear fire-reply: cl: ${cl}`)
+            checkGameOver()
+            let o = Object.values(cl)
+            console.log('o is: ' + o)
+            if (!o.includes('miss') && !o.includes('shot')) {
+                revealSquare(shotFired, cl)
+                checkScore('c', cHits, css)
+            } else infoDisplay.innerHTML = 'Waiting for opponent...'
+            playMp(socket)
+        })
+    
+    
+        // let isJoin = true
+        function joinLeave(num) {
+            let pNum = Number(num) + 1
+            console.log('changing con')
+            document.getElementById(`con${pNum}`).classList.toggle('juice')
+            document.getElementById(`p${pNum}-con`).style.fontWeight = 'bold'
+            if (Number(num) === playerNum) {
+                // console.log(`.p${playerNum}`)
+                // console.log(`.p${playerNum + 1}-tag`)
+                document.querySelector(`#p${playerNum + 1}-tag`).style.fontWeight = 'bold'
+            }
+            // isJoin = !isJoin
         }
-        else infoDisplay.innerHTML = 'Waiting for opponent...'
-        console.log(`client hear fire: id: ${id}`)
-        playMp(socket)
-    })
-
-    socket.on('fire-reply', cl => {
-        console.log(`client hear fire-reply: cl: ${cl}`)
-        checkGameOver()
-        let o = Object.values(cl)
-        console.log('o is: ' + o)
-        if (!o.includes('miss') && !o.includes('shot')) {
-            revealSquare(shotFired, cl)
-            checkScore('c', cHits, css)
-        } else infoDisplay.innerHTML = 'Waiting for opponent...'
-        playMp(socket)
-    })
-
-
-    // let isJoin = true
-    function joinLeave(num) {
-        let pNum = Number(num) + 1
-        console.log('changing con')
-        document.getElementById(`con${pNum}`).classList.toggle('juice')
-        document.getElementById(`p${pNum}-con`).style.fontWeight = 'bold'
-        if (Number(num) === playerNum) {
-            // console.log(`.p${playerNum}`)
-            // console.log(`.p${playerNum + 1}-tag`)
-            document.querySelector(`#p${playerNum + 1}-tag`).style.fontWeight = 'bold'
-        }
-        // isJoin = !isJoin
     }
 }
 
+if (gameMode === 'sp') {
+    startButton.addEventListener('click', start)
+} else if (gameMode === 'mp') {
+    start()
+}
 
 rotateButton.addEventListener('click', rotat_all)
 shipArr[0].addEventListener('click', () => {
@@ -295,12 +280,7 @@ function getValidity(blocks, isHorizontal, startId, ship) {
 
 
 function addShipPiece(user, ship, startId) {
-
-    // let validStart = isHorizontal ? startIdx <= side * side - ship.length ? startIdx : side * side - ship.length : // horizontal check
-    //     startIdx <= side * side - side * ship.length ? startIdx : startIdx - ship.length * side + side // vertical check
-
-    // const pBlocks = document.querySelectorAll('#p div')
-    //user === 'p' ? console.log('p') : console.log('c')
+    console.log('ships are now being added')
     const uBlocks = document.querySelectorAll(`#${user} div`)
     let randomBool = Math.random() < 0.5
     let isHorizontal = user === 'p' ? ship.getAng === 0 : randomBool
@@ -363,45 +343,47 @@ function dropShip(e) {
 var pushBack = 0
 function returnShip(e) {
     console.log(e.target.classList)
-    if (e.target.classList.contains("taken<3")) {
-        let shipName = e.target.classList[1]
-        // -- let shipPreview = e.target.c
-        //e.target.classList.remove(shipName)
-        pBlocks.forEach((b) => {
-            if (b.classList.contains(shipName)) {
-                b.classList.remove(shipName, "taken<3")
-            }
-        })
-
-        let shipNum = shipName.substring(4, 5)
-        const newShip = document.createElement('div')
-        newShip.id = shipNum - 1
-        newShip.classList.add(`${shipName}-preview`)
-        newShip.classList.add(`${shipName}`)
-        newShip.classList.add('ship')
-        newShip.draggable = true
-        shipContainer.appendChild(newShip)
-        shipArr = Array.from(shipContainer.children)
-        shipArrCopy = Array.from(shipContainer.children)
-
-        ships[newShip.id].setAng = 0
-
-        // Check for buggy code below(probably fixed but maybe some bug still remains???)
-        for (let i = 0; i < shipArr.length; i++) {
-            let new_elm = shipArr[i].cloneNode(true)
-            shipArr[i].parentNode.replaceChild(new_elm, shipArr[i])
-            new_elm.addEventListener('click', () => {
-                ships[new_elm.id].setAng = ships[new_elm.id].getAng === 0 ? 90 : 0
-                new_elm.style.transform = `rotate(${ships[new_elm.id].getAng}deg)`
+    if(!started){
+        if (e.target.classList.contains("taken<3")) {
+            let shipName = e.target.classList[1]
+            // -- let shipPreview = e.target.c
+            //e.target.classList.remove(shipName)
+            pBlocks.forEach((b) => {
+                if (b.classList.contains(shipName)) {
+                    b.classList.remove(shipName, "taken<3")
+                }
             })
-            shipArr[i] = new_elm
-            shipArrCopy[i] = new_elm
+    
+            let shipNum = shipName.substring(4, 5)
+            const newShip = document.createElement('div')
+            newShip.id = shipNum - 1
+            newShip.classList.add(`${shipName}-preview`)
+            newShip.classList.add(`${shipName}`)
+            newShip.classList.add('ship')
+            newShip.draggable = true
+            shipContainer.appendChild(newShip)
+            shipArr = Array.from(shipContainer.children)
+            shipArrCopy = Array.from(shipContainer.children)
+    
+            ships[newShip.id].setAng = 0
+    
+            // Check for buggy code below(probably fixed but maybe some bug still remains???)
+            for (let i = 0; i < shipArr.length; i++) {
+                let new_elm = shipArr[i].cloneNode(true)
+                shipArr[i].parentNode.replaceChild(new_elm, shipArr[i])
+                new_elm.addEventListener('click', () => {
+                    ships[new_elm.id].setAng = ships[new_elm.id].getAng === 0 ? 90 : 0
+                    new_elm.style.transform = `rotate(${ships[new_elm.id].getAng}deg)`
+                })
+                shipArr[i] = new_elm
+                shipArrCopy[i] = new_elm
+            }
+    
+            shipArrCopy.forEach(s => s.addEventListener('dragstart', testDragged))
         }
-
-        shipArrCopy.forEach(s => s.addEventListener('dragstart', testDragged))
     }
+    
 }
-
 
 let playerTurn
 
@@ -418,6 +400,7 @@ function playSp() {
             playerTurn = true
             turnDisplay.textContent = 'Your turn'
             infoDisplay.textContent = 'Game has started.'
+            started = true;
         }
 
     }
@@ -534,6 +517,7 @@ function revealSquare(e, cl) {
             eSq.target.classList.add("shot")
 
             infoDisplay.textContent = `Computer ship has been shot, at position (${e.target.id % 10 + 1}, ${Math.floor(e.target.id / 10) + 1})`
+            playsfx('hit.mp3')
             let classes = Array.from(eSq.target.classList)
             classes = classes.filter(n => n !== 'block')
             classes = classes.filter(n => n !== 'shot')
@@ -543,6 +527,7 @@ function revealSquare(e, cl) {
             checkScore('p', pHits, pss) 
         } else {
             infoDisplay.textContent = 'You missed!'
+            playsfx('miss.mp3')
             eSq.target.classList.add('miss')
         }
 
@@ -551,6 +536,7 @@ function revealSquare(e, cl) {
         var obj = Object.values(cl)
         console.log(eSq)
         if (obj.includes('taken<3')) {
+            playsfx('hit.mp3')
             eSq.classList.add("shot")
             infoDisplay.textContent = `Enemy ship has been shot, at position (${eSq.id % 10 + 1}, ${Math.floor(eSq.id / 10) + 1})`
             let classes = Array.from(cl)
@@ -565,6 +551,7 @@ function revealSquare(e, cl) {
             if (obj.includes('ship5')) pShip_5++
             checkScore('p', pHits, pss)
         } else {
+            playsfx('miss.mp3')
             infoDisplay.textContent = 'You missed!'
             eSq.classList.add('miss')
             checkScore('p', pHits, pss)
@@ -602,6 +589,7 @@ function enemyGo(sq) {
                 console.log('hit')
                 pBlocks[sq].classList.add('shot')
                 infoDisplay.textContent = `Enemy shot your ship at position ${pBlocks[sq].id}`
+                playsfx('hit.mp3')
                 let classes = Array.from(pBlocks[sq].classList)
                 classes = classes.filter(n => n !== 'block')
                 classes = classes.filter(n => n !== 'shot')
@@ -616,6 +604,7 @@ function enemyGo(sq) {
             } else {
                 // console.log('miss')
                 infoDisplay.textContent = `Enemy missed at position ${pBlocks[sq].id}`
+                playsfx('miss.mp3')
                 pBlocks[sq].classList.add('miss')
             }
 
@@ -650,6 +639,7 @@ function checkScore(usr, usr_hits, usr_ss) {
     function checkShip(sname, length) {
         if (usr_hits.filter(hit => hit === sname).length === length) {
             infoDisplay.textContent = `Your ${sname} has been sunk!`
+            playsfx('sunk.mp3')
             if (usr === 'p') {
                 pHits = usr_hits.filter(ship => ship !== sname)
             } else if (usr === 'c') {
@@ -660,43 +650,53 @@ function checkScore(usr, usr_hits, usr_ss) {
         else if (pShip_1 == 2 && ps1_s === false) {
             infoDisplay.innerHTML = 'You sunk the enemy\'s ship1!'
             ps1_s = true
+            playsfx('sunk.mp3')
         }
         else if (pShip_2 == 3 && ps2_s === false) {
             infoDisplay.innerHTML = 'You sunk the enemy\'s ship2!'
             ps2_s = true
+            playsfx('sunk.mp3')
         }
         else if (pShip_3 == 3 && ps3_s === false) {
             infoDisplay.innerHTML = 'You sunk the enemy\'s ship3!'
             ps3_s = true
+            playsfx('sunk.mp3')
         }
         else if (pShip_4 == 4 && ps4_s === false) {
             infoDisplay.innerHTML = 'You sunk the enemy\'s ship4!'
             ps4_s = true
+            playsfx('sunk.mp3')
         }
         else if (pShip_5 == 5 && ps5_s === false) {
             infoDisplay.innerHTML = 'You sunk the enemy\'s ship5!'
             ps5_s = true
+            playsfx('sunk.mp3')
         }
 
         else if (cShip_1 == 2 && cs1_s === false) {
             infoDisplay.innerHTML = 'The enemy sunk your ship1!'
             cs1_s = true
+            playsfx('sunk.mp3')
         }
         else if (cShip_2 == 3 && cs2_s === false) {
             infoDisplay.innerHTML = 'The enemy sunk your ship2!'
             cs2_s = true
+            playsfx('sunk.mp3')
         }
         else if (cShip_3 == 3 && cs3_s === false) {
             infoDisplay.innerHTML = 'The enemy sunk your ship3!'
             cs3_s = true
+            playsfx('sunk.mp3')
         }
         else if (cShip_4 == 4 && cs4_s === false) {
             infoDisplay.innerHTML = 'The enemy sunk your ship4!'
             cs4_s = true
+            playsfx('sunk.mp3')
         }
         else if (cShip_5 == 5 && cs5_s === false) {
             infoDisplay.innerHTML = 'The enemy sunk your ship5!'
             cs5_s = true
+            playsfx('sunk.mp3')
         }
     }
 
@@ -716,4 +716,10 @@ function checkGameOver() {
         gameOver = true
         // process.exit(0)
     }
+}
+    
+let playsfx = (src) => {
+    let sound = new Audio(`sounds/${src}`)
+    sound.volume = src === 'hit.mp3' ? 0.4 : 1
+    sound.play()
 }
