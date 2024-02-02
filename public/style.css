@@ -1,7 +1,9 @@
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     font-family: 'Montserrat', sans-serif;
     box-sizing: border-box;
-  }
+}
 
 .btn {
     background-color: #86b453;
@@ -20,6 +22,11 @@
     justify-content: center;
 }
 
+.connection {
+    /* background-color: #929292; */
+    padding: .5em 1em;
+}
+
 .button-contain {
     width: 500px;
     height: 108px;
@@ -34,9 +41,10 @@
     justify-content: center;
 }
 
-.btn:hover, .btn:focus {
+.btn:hover,
+.btn:focus {
     background-color: #96c265;
-  }
+}
 
 .splash-title {
     font-family: 'Alfa Slab One', serif;
@@ -48,13 +56,14 @@
 
 @-webkit-keyframes glow {
     from {
-      text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ffffff;
+        text-shadow: 0 0 0px #fff;
     }
+
     to {
-      text-shadow: 0 0 20px #fff, 0 0 30px #6eca6b, 0 0 40px #de77aa;
+        text-shadow: 0 0 10px #fff;
     }
-  }
-  
+}
+
 .splash-container {
     display: flex;
     flex-direction: column;
@@ -72,11 +81,13 @@
     pointer-events: none;
     opacity: .25;
 }
-  
-  
+
+
 .infoBox {
     color: #ffffff;
-    width:100%;
+    border-radius: .2em;
+    width: 100%;
+    height: 100px;
     font-weight: 500;
     background-color: #929292;
     padding: .5em 1em;
@@ -99,6 +110,7 @@
     padding: 0;
     box-sizing: border-box;
 }
+
 .boards {
     margin-top: 0.9vw;
     width: 25vw;
@@ -109,7 +121,7 @@
 }
 
 #actualGame {
-    display:flex;
+    display: flex;
     margin: 5vh 3vw 3vh 3vw;
     /* border: 1px solid black; */
     flex-flow: row wrap;
@@ -123,7 +135,7 @@
 }
 
 #game-info {
-    display:flex;
+    display: flex;
     text-align: left;
     justify-content: flex-start;
     flex-direction: column;
@@ -142,10 +154,10 @@
     width: 70%;
     display: flex;
     justify-content: space-evenly;
-    flex-wrap:wrap;
+    flex-wrap: wrap;
     margin-top: 4vh;
-    margin-bottom:4vh;
-    
+    margin-bottom: 4vh;
+
     padding: 0;
 }
 
@@ -185,7 +197,11 @@ body {
     margin: 3px;
 }
 
-.ship1, .ship2, .ship3, .ship4, .ship5 {
+.ship1,
+.ship2,
+.ship3,
+.ship4,
+.ship5 {
     background-color: rgb(155, 155, 155);
 }
 
@@ -218,18 +234,18 @@ body {
 }
 
 #button-container {
-    display:flex;
+    display: flex;
     justify-content: space-around;
     margin-top: 4vh;
     margin-bottom: 1vh;
     width: 70%;
-    flex-wrap:wrap;
+    flex-wrap: wrap;
     text-align: center;
 }
 
 #game-info p {
-    margin:0;
-    padding:0;
+    margin: 0;
+    padding: 0;
 }
 
 #info {
@@ -237,15 +253,18 @@ body {
     top: 30px;
 }
 
-#c div.block.shot, #p div.block.shot {
+#c div.block.shot,
+#p div.block.shot {
     background-color: red;
 }
 
-#c div.block.miss, #p div.block.miss {
+#c div.block.miss,
+#p div.block.miss {
     background-color: rgb(28, 28, 30);
 }
 
-.connected span img, .ready span img{
+.connected span img,
+.ready span img {
     display: inline-block;
     width: 1rem;
     height: 1rem;
@@ -259,3 +278,10 @@ span img.juice {
     height: 1rem;
 }
 
+#c div.ship1,
+#c div.ship2,
+#c div.ship3,
+#c div.ship4,
+#c div.ship5 {
+    background-color: #3D6187;
+}

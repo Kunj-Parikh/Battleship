@@ -6,8 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Battleship</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+        rel="stylesheet">
     <script src="/socket.io/socket.io.js"></script>
     <script defer src="script.js"></script>
     <script defer src="login.js"></script>
@@ -19,16 +23,18 @@
 
 <body>
 
-    
+
     <div class="head" id="game-info">
-        <a href="index.html"><div class="heading" style="display: flex; align-items: flex-end;">BATTLESHIP</div></a>
+        <a href="index.html">
+            <div class="heading" style="display: flex; align-items: flex-end;">BATTLESHIP</div>
+        </a>
         <!-- Info/turn displays, will inject text into this -->
         <br>
     </div>
     <!-- gameboards -->
 
     <div id="actualGame">
-        <div id="not-boards" style ="width: 25%">
+        <div id="not-boards" style="width: 25%">
 
             <div class="infoBox">
                 <p>Turn: <!----><span id="turn-display"></span></p>
@@ -37,7 +43,7 @@
 
             <!-- ships -->
             <div id="pos" style="display: flex; align-items: flex-end;">
-                <div class ="outer-button-contain">
+                <div class="outer-button-contain">
                     <div class="ship-container">
                         <div id="0" class="ship1-preview ship1 ship" draggable="true"></div>
                         <div id="1" class="ship2-preview ship2 ship" draggable="true"></div>
@@ -47,21 +53,23 @@
                     </div>
 
                 </div>
-                
+
 
             </div>
             <div class="outer-button-contain">
-                <div class = "button-contain" id="button-container">
-                    <button class ="btn" id="rotate-button">ROTATE ALL</button>
+                <div class="button-contain" id="button-container">
+                    <button class="btn" id="rotate-button">ROTATE ALL</button>
                     <button class="btn" id="start-button">START</button>
                 </div>
             </div>
-            
+
 
 
             <br>
-            <p class="notBox" style="display: flex; align-items: flex-end;" id="info-box">Click on each individual ship to rotate it!</p>
-            <p class="notBox" style="display: flex; align-items: flex-end;">If you accidentally misplace a ship, click on the ship to restore it.</p>
+            <p class="notBox" style="display: flex; align-items: flex-end;" id="info-box">Click on each individual ship
+                to rotate it!</p>
+            <p class="notBox" style="display: flex; align-items: flex-end;">If you accidentally misplace a ship, click
+                on the ship to restore it.</p>
             <br>
         </div>
         <div class="game-container" id="game-container"></div>
