@@ -1,0 +1,190 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.boards {
+    width: 200px;
+    height: 200px;
+    border: black 1px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#actualGame {
+    display:flex;
+    margin: 5vh 5vw 5vh 5vw;
+    /* border: 1px solid black; */
+    flex-flow: row wrap;
+    justify-content: space-between;
+}
+
+#not-boards {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+}
+
+#game-info {
+    display:flex;
+    text-align: left;
+    justify-content: flex-start;
+    flex-direction: column;
+}
+
+.block {
+    width: 20px;
+    height: 20px;
+    border: solid 1px black;
+    box-sizing: border-box;
+}
+
+
+#game-container {
+    width: 50%;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap:wrap;
+    margin-top: 4vh;
+    margin-bottom:4vh;
+    padding: 0;
+}
+
+body {
+    text-align: center;
+}
+
+.ship-container {
+    width: 100%;
+    height: 50px;
+    background-color: yellow;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    flex-flow: row wrap;
+    margin-top: 4vh;
+}
+
+.ship1-preview {
+    width: 20px;
+    height: 10px;
+    margin: 3px;
+}
+
+.ship1 {
+    background-color: maroon;
+}
+
+.ship2-preview {
+    width: 30px;
+    height: 10px;
+    margin: 3px;
+}
+
+.ship2 {
+    background-color: orange;
+}
+
+.ship3-preview {
+    width: 30px;
+    height: 10px;
+    margin: 3px;
+}
+
+.ship3 {
+    background-color: violet;
+}
+
+.ship4-preview {
+    width: 40px;
+    height: 10px;
+    margin: 3px;
+}
+
+.ship4 {
+    background-color: blue;
+}
+
+.ship5-preview {
+    width: 50px;
+    height: 10px;
+    margin: 3px;
+}
+
+.ship5 {
+    background-color: purple;
+}
+
+.ship {
+    cursor: pointer;
+}
+/* #computer .ship1,
+#computer .ship2 {
+    background-color: green !important;
+} */
+
+#button-container {
+    display:flex;
+    justify-content: space-around;
+    margin-top: 4vh;
+    margin-bottom: 1vh;
+    width: 44vw;
+    flex-wrap:wrap;
+}
+#rotate-button {
+    /* position: absolute; */
+    display:flex;
+
+    /* left: 10px;
+    top: 600px; */
+
+}
+
+#start-button {
+    /* position: absolute;
+    top: 400px;
+    left: 48.5%; */
+    display:flex;
+
+}
+
+#game-info p {
+    margin:0;
+    padding:0;
+}
+
+#info {
+    position: relative;
+    top: 30px;
+}
+
+#c .ship1,
+#c .ship2,
+#c .ship3,
+#c .ship4,
+#c .ship5 {
+    background-color: green;
+}
+
+#c div.block.shot, #p div.block.shot {
+    background-color: red;
+}
+
+#c div.block.miss, #p div.block.miss {
+    background-color: rgb(28, 28, 30);
+}
+
+.connected span img, .ready span img{
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    /* background: red */
+}
+
+span img.juice {
+    content: url('imgs/cute_duck.png');
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+}
+

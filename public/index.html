@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battleship</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script defer src="script.js"></script>
+    <script defer src="login.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+</head>
+
+<body>
+    <section id="box">
+        <div class="form">
+            <h2>Login</h2>
+            <form action="" method="POST">
+                <input type="email" name="username" class="input-field" placeholder="Email">
+                <input type="password" name="password" class="input-field" placeholder="Password">
+                <input type="button" value="LOGIN" class="btn">
+            </form>
+        </div>
+    </section>
+    <button id="spButton">Singleplayer</button>
+    <button id="mpButton">Multiplayer</button>
+    <div class="p p1">
+        <div id="p1-tag">Player 1</div>
+        <div class="connected"> <span id="p1-con">Connected </span> <span><img id="con1" class=""
+                    src="imgs/crying_chick.png"></span></div>
+        <div class="ready"> <span id="p1-red">Ready </span> <span><img id="red1" class=""
+                    src="imgs/crying_chick.png"></span></div>
+    </div>
+    <div class="p p2">
+        <div id="p2-tag">Player 2</div>
+        <div class="connected"> <span id="p2-con">Connected </span> <span><img id="con2" class=""
+                    src="imgs/crying_chick.png"></span></div>
+        <div class="ready"> <span id="p2-red">Ready </span> <span><img id="red2" class=""
+                    src="imgs/crying_chick.png"></span></div>
+    </div>
+
+    <!-- gameboards -->
+    <div id="actualGame">
+        <div id="not-boards">
+            <div id="game-info">
+                <h1 style="text-align: center;">Battleship</h1>
+                <!-- Info/turn displays, will inject text into this -->
+                <p>Turn:<!----><span id="turn-display"></span></p>
+                <p>Info:<!----><span id="info"></span></p>
+            </div>
+            <!-- ships -->
+            <div id="pos" style="display: flex; align-items: flex-end;">
+                <div class="ship-container">
+                    <div id="0" class="ship1-preview ship1 ship" draggable="true"></div>
+                    <div id="1" class="ship2-preview ship2 ship" draggable="true"></div>
+                    <div id="2" class="ship3-preview ship3 ship" draggable="true"></div>
+                    <div id="3" class="ship4-preview ship4 ship" draggable="true"></div>
+                    <div id="4" class="ship5-preview ship5 ship" draggable="true"></div>
+                </div>
+            </div>
+            <div id="button-container">
+                <button id="rotate-button">ROTATE ALL</button>
+                <button id="start-button">START</button>
+            </div>
+            <br>
+            <p style="text-align:center" id="info-box">Click on each individual ship to rotate it!</p>
+            <p style="text-align:center">If you accidentally misplace a ship, click on the ship to restore it.</p>
+            <br>
+        </div>
+        <div id="game-container"></div>
+    </div>
+</body>
+
+</html>
