@@ -12,7 +12,26 @@
     cursor: pointer;
     border-radius: .2em;
     color: #ffffff;
-    font-size: 100%;
+    font-size: 1.7em;
+    height: 50px;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.button-contain {
+    width: 500px;
+    height: 108px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.outer-button-contain {
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
 .btn:hover, .btn:focus {
@@ -57,6 +76,11 @@
   
 .infoBox {
     color: #ffffff;
+    width:100%;
+    font-weight: 500;
+    background-color: #929292;
+    padding: .5em 1em;
+    text-align: left;
 }
 
 .notBox {
@@ -76,8 +100,9 @@
     box-sizing: border-box;
 }
 .boards {
-    width: 20vw;
-    height: 20vw;
+    margin-top: 0.9vw;
+    width: 25vw;
+    height: 25vw;
     border: black 1px;
     display: flex;
     flex-wrap: wrap;
@@ -85,7 +110,7 @@
 
 #actualGame {
     display:flex;
-    margin: 5vh 5vw 5vh 5vw;
+    margin: 5vh 3vw 3vh 3vw;
     /* border: 1px solid black; */
     flex-flow: row wrap;
     justify-content: space-between;
@@ -102,7 +127,7 @@
     text-align: left;
     justify-content: flex-start;
     flex-direction: column;
-    width: 70%;
+    width: 100%;
 }
 
 .block {
@@ -116,10 +141,11 @@
 #game-container {
     width: 70%;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-evenly;
     flex-wrap:wrap;
     margin-top: 4vh;
     margin-bottom:4vh;
+    
     padding: 0;
 }
 
@@ -127,6 +153,17 @@ body {
     color: white;
     text-align: center;
     background-color: rgb(44, 44, 44);
+    font-family: "Open Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 300;
+    font-style: normal;
+    font-variation-settings: "wdth" 100;
+}
+
+.head {
+    width: 100%;
+    display: flex;
+    margin: 5vh 3vw 3vh 3vw;
 }
 
 .ship-container {
@@ -149,7 +186,7 @@ body {
 }
 
 .ship1, .ship2, .ship3, .ship4, .ship5 {
-    background-color: rgb(101, 101, 101);
+    background-color: rgb(155, 155, 155);
 }
 
 .ship2-preview {

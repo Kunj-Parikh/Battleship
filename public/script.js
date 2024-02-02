@@ -177,6 +177,7 @@ function start() {
 if (gameMode === 'sp') {
     startButton.addEventListener('click', start)
 } else if (gameMode === 'mp') {
+
     start()
 }
 
